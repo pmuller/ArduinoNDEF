@@ -6,6 +6,8 @@ void test_record_constructor()
 {
   NdefRecord record;
   TEST_ASSERT_EQUAL(record.get_type_name_format(), NdefRecord::TNF_EMPTY);
+  TEST_ASSERT_FALSE(record.is_message_begin);
+  TEST_ASSERT_FALSE(record.is_message_end);
 }
 
 int run_unity_tests(void)
