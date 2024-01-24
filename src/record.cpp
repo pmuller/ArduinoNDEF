@@ -56,6 +56,8 @@ DECLARE_FIELD_SETTER(type, uint8_t)
 DECLARE_FIELD_SETTER(id, uint8_t)
 DECLARE_FIELD_SETTER(payload, size_t)
 
+uint8_t *NdefRecord::get_type() { return type; }
+
 int8_t NdefRecord::set_type(RTD type)
 {
   REALLOC_FIELD_OR_FAIL(type, 1);

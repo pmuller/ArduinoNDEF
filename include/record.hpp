@@ -35,6 +35,7 @@ class NdefRecord
 
     TNF get_type_name_format();
     void set_type_name_format(TNF type_name_format);
+    uint8_t *get_type();
     int8_t set_type(uint8_t *type, uint8_t type_length);
     int8_t set_type(RTD type);
     int8_t set_id(uint8_t *id, uint8_t id_length);
