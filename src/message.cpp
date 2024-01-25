@@ -16,15 +16,15 @@ NdefMessage::NdefMessage()
 NdefMessage::~NdefMessage()
 {
   for (uint8_t i = 0; i < record_count; i++)
-    delete &records[i];
+    free(records[i]);
 
   free(records);
 }
 
 int8_t NdefMessage::add_record(NdefRecord *record)
 {
-  NdefRecord *records =
-      (NdefRecord *)realloc(this->records, sizeof(NdefRecord) * (record_count + 1));
+  NdefRecord **records =
+      (NdefRecord **)realloc(this->records, sizeof(NdefRecord *) * (record_count + 1));
 
   if (records == nullptr)
   {
@@ -41,11 +41,11 @@ int8_t NdefMessage::add_record(NdefRecord *record)
   }
   else
   {
-    records[record_count - 1].is_message_end = false;
+    records[record_count - 1]->is_message_end = false;
     record->is_message_end = true;
   }
 
-  records[record_count++] = *record;
+  records[record_count++] = record;
 
   return NDEF_SUCCESS;
 }
@@ -139,7 +139,7 @@ uint32_t NdefMessage::get_encoded_size()
   uint32_t result = 0;
 
   for (uint8_t i = 0; i < record_count; i++)
-    result += records[i].get_encoded_size();
+    result += records[i]->get_encoded_size();
 
   return result;
 }
@@ -151,8 +151,8 @@ uint8_t *NdefMessage::encode()
 
   for (uint8_t i = 0; i < record_count; i++)
   {
-    uint8_t *record_encoded = records[i].encode();
-    uint32_t record_encoded_size = records[i].get_encoded_size();
+    uint8_t *record_encoded = records[i]->encode();
+    uint32_t record_encoded_size = records[i]->get_encoded_size();
     memcpy(result_ptr, record_encoded, record_encoded_size);
     result_ptr += record_encoded_size;
     free(record_encoded);

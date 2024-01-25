@@ -113,6 +113,6 @@ class NdefMessage
     uint8_t get_record_count();
 
   private:
-    NdefRecord *records;
+    NdefRecord **records;
     uint8_t record_count;
 };
