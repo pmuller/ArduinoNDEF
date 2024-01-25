@@ -1,6 +1,6 @@
 #line 2 "RecordTest.ino"
 
-#include <AUnit.h>
+#include <AUnitVerbose.h>
 #include <MFRC522v2-NDEF.hpp>
 
 test(record_constructor)
