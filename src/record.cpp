@@ -70,6 +70,8 @@ int8_t NdefRecord::set_type(RTD type)
 
 uint8_t *NdefRecord::get_id() { return id; }
 
+uint8_t *NdefRecord::get_payload() { return payload; }
+
 uint8_t *NdefRecord::encode()
 {
   SAFE_MALLOC(
