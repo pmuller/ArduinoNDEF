@@ -4,6 +4,13 @@
 #include <AUnitVerbose.h>
 #include <MFRC522v2-NDEF.hpp>
 
+test(message_constructor)
+{
+  NdefMessage message;
+  assertEqual(message.get_record_count(), (uint8_t)0);
+  assertEqual(message.get_encoded_size(), (uint32_t)0);
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)
