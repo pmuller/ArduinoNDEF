@@ -14,7 +14,7 @@ test(message_add_one_record)
 {
   NdefMessage message;
   NdefRecord *record = new NdefRecord();
-  message.add_record(record);
+  assertEqual(message.add_record(record), NDEF_SUCCESS);
   assertEqual(message.get_record_count(), (uint8_t)1);
   assertEqual(message.get_encoded_size(), (uint32_t)3);
   uint8_t *encoded = message.encode();
@@ -31,9 +31,9 @@ test(message_add_three_records)
   NdefRecord *record1 = new NdefRecord();
   NdefRecord *record2 = new NdefRecord();
   NdefRecord *record3 = new NdefRecord();
-  message.add_record(record1);
-  message.add_record(record2);
-  message.add_record(record3);
+  assertEqual(message.add_record(record1), NDEF_SUCCESS);
+  assertEqual(message.add_record(record2), NDEF_SUCCESS);
+  assertEqual(message.add_record(record3), NDEF_SUCCESS);
   assertEqual(message.get_record_count(), (uint8_t)3);
   assertEqual(message.get_encoded_size(), (uint32_t)9);
   uint8_t *encoded = message.encode();
@@ -55,7 +55,10 @@ test(message_add_three_records)
 test(message_add_mime_media_record)
 {
   NdefMessage message;
-  message.add_mime_media_record((uint8_t *)"text/plain", 10, (uint8_t *)"Hello", 5);
+  assertEqual(
+      message.add_mime_media_record((uint8_t *)"text/plain", 10, (uint8_t *)"Hello", 5),
+      NDEF_SUCCESS
+  );
   assertEqual(message.get_record_count(), (uint8_t)1);
   assertEqual(message.get_encoded_size(), (uint32_t)18);
   uint8_t *encoded = message.encode();
