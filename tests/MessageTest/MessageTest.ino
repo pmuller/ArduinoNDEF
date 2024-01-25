@@ -52,6 +52,39 @@ test(message_add_three_records)
   free(encoded);
 }
 
+test(message_add_mime_media_record)
+{
+  NdefMessage message;
+  message.add_mime_media_record((uint8_t *)"text/plain", 10, (uint8_t *)"Hello", 5);
+  assertEqual(message.get_record_count(), (uint8_t)1);
+  assertEqual(message.get_encoded_size(), (uint32_t)18);
+  uint8_t *encoded = message.encode();
+  // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x02
+  assertEqual(encoded[0], (uint8_t)0b11010010);
+  // Type length is 10
+  assertEqual(encoded[1], (uint8_t)10);
+  // Payload length is 5
+  assertEqual(encoded[2], (uint8_t)5);
+  // Type is "text/plain"
+  assertEqual(encoded[3], (uint8_t)'t');
+  assertEqual(encoded[4], (uint8_t)'e');
+  assertEqual(encoded[5], (uint8_t)'x');
+  assertEqual(encoded[6], (uint8_t)'t');
+  assertEqual(encoded[7], (uint8_t)'/');
+  assertEqual(encoded[8], (uint8_t)'p');
+  assertEqual(encoded[9], (uint8_t)'l');
+  assertEqual(encoded[10], (uint8_t)'a');
+  assertEqual(encoded[11], (uint8_t)'i');
+  assertEqual(encoded[12], (uint8_t)'n');
+  // Payload is "Hello"
+  assertEqual(encoded[13], (uint8_t)'H');
+  assertEqual(encoded[14], (uint8_t)'e');
+  assertEqual(encoded[15], (uint8_t)'l');
+  assertEqual(encoded[16], (uint8_t)'l');
+  assertEqual(encoded[17], (uint8_t)'o');
+  free(encoded);
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)
