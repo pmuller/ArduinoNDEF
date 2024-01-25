@@ -1,4 +1,3 @@
-
 #line 2 "MessageTest.ino"
 
 #include <AUnitVerbose.h>
