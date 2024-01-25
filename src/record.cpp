@@ -235,6 +235,8 @@ int8_t NdefRecord::decode(uint8_t *data, uint32_t data_length)
   data_ptr += payload_length;
 
   // Initialize record
+  this->is_message_begin = is_message_begin;
+  this->is_message_end = is_message_end;
   this->type_name_format = type_name_format;
   this->type = type;
   this->type_length = type_length;

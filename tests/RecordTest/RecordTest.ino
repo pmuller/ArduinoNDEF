@@ -56,7 +56,7 @@ test(record_encode_short)
 test(record_decode_short)
 {
   uint8_t encoded[] = {
-      0b00010001,           // MB=0, ME=0, CF=0, SR=1, IL=0, TNF=0x01
+      0b11010001,           // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x01
       1,                    // Type length is 1
       5,                    // Payload length is 5
       NdefRecord::RTD_TEXT, // Type is RTD_TEXT
@@ -68,6 +68,8 @@ test(record_decode_short)
   };
   NdefRecord record;
   assertEqual(record.decode(encoded, sizeof(encoded)), NDEF_SUCCESS);
+  assertTrue(record.is_message_begin);
+  assertTrue(record.is_message_end);
   assertEqual(record.get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record.get_type_length(), (uint8_t)1);
   assertEqual(record.get_type()[0], (uint8_t)'T');
