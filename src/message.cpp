@@ -3,11 +3,13 @@
 #include "constants.hpp"
 #include "macros.hpp"
 
-#include <cstring>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 NdefMessage::NdefMessage()
 {
-  records = NULL;
+  records = nullptr;
   record_count = 0;
 }
 
@@ -24,7 +26,7 @@ int8_t NdefMessage::add_record(NdefRecord *record)
   NdefRecord *records =
       (NdefRecord *)realloc(this->records, sizeof(NdefRecord) * (record_count + 1));
 
-  if (records == NULL)
+  if (records == nullptr)
   {
     PRINTLN(F("NdefMessage::add_record failed to allocate memory"));
     return NDEF_ERROR_MALLOC_FAILED;
@@ -52,7 +54,7 @@ int8_t NdefMessage::add_mime_media_record(
     uint8_t *mime_type,
     uint8_t mime_type_length,
     uint8_t *payload,
-    size_t payload_length
+    uint32_t payload_length
 )
 {
   NdefRecord *record = new NdefRecord();
@@ -67,15 +69,15 @@ int8_t NdefMessage::add_mime_media_record(
 int8_t NdefMessage::add_text_record(char *text, const char *language_code)
 {
   // Prepare header
-  size_t language_code_length = strlen(language_code);
-  size_t header_length = 1 + language_code_length;
+  uint32_t language_code_length = strlen(language_code);
+  uint32_t header_length = 1 + language_code_length;
   uint8_t header[header_length];
   header[0] = language_code_length;
   memcpy(header + 1, language_code, language_code_length);
 
   // Prepare payload
-  size_t text_length = strlen(text);
-  size_t payload_length = header_length + text_length;
+  uint32_t text_length = strlen(text);
+  uint32_t payload_length = header_length + text_length;
   uint8_t payload[payload_length];
   memcpy(payload, header, header_length);
   memcpy(payload + header_length, text, text_length);
@@ -94,8 +96,8 @@ int8_t NdefMessage::add_text_record(char *text, const char *language_code)
 int8_t NdefMessage::add_uri_record(char *uri)
 {
   // Prepare payload
-  size_t uri_length = strlen(uri);
-  size_t payload_length = 1 + uri_length;
+  uint32_t uri_length = strlen(uri);
+  uint32_t payload_length = 1 + uri_length;
   uint8_t payload[payload_length];
   payload[0] = 0;
   memcpy(payload + 1, uri, uri_length);
@@ -112,7 +114,7 @@ int8_t NdefMessage::add_uri_record(char *uri)
 }
 
 int8_t NdefMessage::add_external_type_record(
-    uint8_t *type, uint8_t type_length, uint8_t *payload, size_t payload_length
+    uint8_t *type, uint8_t type_length, uint8_t *payload, uint32_t payload_length
 )
 {
   NdefRecord *record = new NdefRecord();
@@ -132,9 +134,9 @@ int8_t NdefMessage::add_empty_record()
   return NDEF_SUCCESS;
 }
 
-size_t NdefMessage::get_encoded_size()
+uint32_t NdefMessage::get_encoded_size()
 {
-  size_t result = 0;
+  uint32_t result = 0;
 
   for (uint8_t i = 0; i < record_count; i++)
     result += records[i].get_encoded_size();
@@ -144,13 +146,13 @@ size_t NdefMessage::get_encoded_size()
 
 uint8_t *NdefMessage::encode()
 {
-  SAFE_MALLOC(uint8_t *, result, get_encoded_size(), NULL, {});
+  SAFE_MALLOC(uint8_t *, result, get_encoded_size(), nullptr, {});
   uint8_t *result_ptr = result;
 
   for (uint8_t i = 0; i < record_count; i++)
   {
     uint8_t *record_encoded = records[i].encode();
-    size_t record_encoded_size = records[i].get_encoded_size();
+    uint32_t record_encoded_size = records[i].get_encoded_size();
     memcpy(result_ptr, record_encoded, record_encoded_size);
     result_ptr += record_encoded_size;
     free(record_encoded);
@@ -159,7 +161,7 @@ uint8_t *NdefMessage::encode()
   return result;
 }
 
-int8_t NdefMessage::decode(uint8_t *data, size_t data_length)
+int8_t NdefMessage::decode(uint8_t *data, uint32_t data_length)
 {
   uint8_t *data_ptr = data;
   uint8_t *data_end = data + data_length;

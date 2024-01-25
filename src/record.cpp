@@ -3,18 +3,20 @@
 #include "constants.hpp"
 #include "macros.hpp"
 
-#include <cstring>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 NdefRecord::NdefRecord()
 {
   is_message_begin = false;
   is_message_end = false;
   type_name_format = TNF_EMPTY;
-  type = NULL;
+  type = nullptr;
   type_length = 0;
-  id = NULL;
+  id = nullptr;
   id_length = 0;
-  payload = NULL;
+  payload = nullptr;
   payload_length = 0;
 }
 
@@ -34,7 +36,7 @@ void NdefRecord::set_type_name_format(TNF type_name_format)
 
 #define REALLOC_FIELD_OR_FAIL(name, size)                                              \
   uint8_t *pointer = (uint8_t *)realloc(this->name, size);                             \
-  if (pointer == NULL)                                                                 \
+  if (pointer == nullptr)                                                              \
   {                                                                                    \
     PRINT(F("NdefRecord::set_"));                                                      \
     PRINT(#name);                                                                      \
@@ -43,8 +45,8 @@ void NdefRecord::set_type_name_format(TNF type_name_format)
   }                                                                                    \
   this->name = pointer;
 
-#define DECLARE_FIELD_SETTER(name, size_type)                                          \
-  int8_t NdefRecord::set_##name(uint8_t *name, size_type name##_length)                \
+#define DECLARE_FIELD_SETTER(name, uint32_type)                                        \
+  int8_t NdefRecord::set_##name(uint8_t *name, uint32_type name##_length)              \
   {                                                                                    \
     REALLOC_FIELD_OR_FAIL(name, name##_length);                                        \
     memcpy(this->name, name, name##_length);                                           \
@@ -54,7 +56,7 @@ void NdefRecord::set_type_name_format(TNF type_name_format)
 
 DECLARE_FIELD_SETTER(type, uint8_t)
 DECLARE_FIELD_SETTER(id, uint8_t)
-DECLARE_FIELD_SETTER(payload, size_t)
+DECLARE_FIELD_SETTER(payload, uint32_t)
 
 uint8_t *NdefRecord::get_type() { return type; }
 
@@ -124,7 +126,7 @@ uint8_t *NdefRecord::encode()
   return result;
 }
 
-size_t NdefRecord::get_encoded_size()
+uint32_t NdefRecord::get_encoded_size()
 {
   return 2                              // TNF + flags + type length
        + (payload_length > 255 ? 4 : 1) // payload length size
@@ -144,7 +146,7 @@ size_t NdefRecord::get_encoded_size()
     return NDEF_RECORD_DECODE_ERROR_INVALID_LENGTH;                                    \
   }
 
-int8_t NdefRecord::decode(uint8_t *data, size_t data_length)
+int8_t NdefRecord::decode(uint8_t *data, uint32_t data_length)
 {
   uint8_t *data_ptr = data;
   uint8_t minimum_length = 0;
@@ -175,7 +177,7 @@ int8_t NdefRecord::decode(uint8_t *data, size_t data_length)
   INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(type_length);
 
   // Payload length
-  size_t payload_length;
+  uint32_t payload_length;
   if (is_short_record)
   {
     payload_length = *data_ptr++;
@@ -206,7 +208,7 @@ int8_t NdefRecord::decode(uint8_t *data, size_t data_length)
   data_ptr += type_length;
 
   // ID
-  uint8_t *id = NULL;
+  uint8_t *id = nullptr;
   if (id_length > 0)
   {
     SAFE_MALLOC(uint8_t *, id, id_length, NDEF_ERROR_MALLOC_FAILED, { free(type); });

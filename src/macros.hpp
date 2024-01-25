@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdlib>
-
 // Early return when an error occurs
 #define RETURN_IF_ERROR(expression, error_handling_block)                              \
   error = expression;                                                                  \
@@ -39,15 +37,9 @@
 
 // Only log debug messages when DEBUG is defined
 #ifdef DEBUG
-#ifdef ARDUINO
 #define PRINT(value) Serial.print(value)
 #define PRINTLN(value) Serial.println(value)
-#else // ARDUINO
-#include <iostream>
-#define PRINT(value) std::cout << value
-#define PRINTLN(value) std::cout << value << std::endl
-#endif // ARDUINO
-#else  // DEBUG
+#else // DEBUG
 #define PRINT(value) (void)0
 #define PRINTLN(value) (void)0
 #endif // DEBUG
