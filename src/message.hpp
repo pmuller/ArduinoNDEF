@@ -105,6 +105,13 @@ class NdefMessage
      */
     int8_t decode(uint8_t *data, uint32_t data_length);
 
+    /**
+     * @brief Get the record count
+     *
+     * @return uint8_t Record count
+     */
+    uint8_t get_record_count();
+
   private:
     NdefRecord *records;
     uint8_t record_count;

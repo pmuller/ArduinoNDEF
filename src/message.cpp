@@ -179,3 +179,5 @@ int8_t NdefMessage::decode(uint8_t *data, uint32_t data_length)
 
   return NDEF_SUCCESS;
 }
+
+uint8_t NdefMessage::get_record_count() { return record_count; }
