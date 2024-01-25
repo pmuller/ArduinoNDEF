@@ -52,6 +52,37 @@ test(record_encode_short)
   free(encoded);
 }
 
+const uint8_t LONG_TEXT[] =
+    "For instance, on the planet Earth, man had always assumed that he was more "
+    "intelligent than dolphins because he had achieved so much - the wheel, New York, "
+    "wars and so on - whilst all the dolphins had ever done was muck about in the "
+    "water having a good time. But conversely, the dolphins had always believed that "
+    "they were far more intelligent than man - for precisely the same reasons.";
+
+test(record_encode_long_text)
+{
+  NdefRecord record;
+  record.set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
+  record.set_type(NdefRecord::RTD_TEXT);
+  record.set_payload((uint8_t *)LONG_TEXT, 386);
+  uint8_t *encoded = record.encode();
+  // SR flag is 0, TNF is 0x01
+  assertEqual(encoded[0], (uint8_t)0b00000001);
+  // Type length is 1
+  assertEqual(encoded[1], (uint8_t)1);
+  // Payload length is 386
+  assertEqual(encoded[2], (uint8_t)0);
+  assertEqual(encoded[3], (uint8_t)0);
+  assertEqual(encoded[4], (uint8_t)1);
+  assertEqual(encoded[5], (uint8_t)130);
+  // Type is RTD_TEXT
+  assertEqual(encoded[6], (uint8_t)NdefRecord::RTD_TEXT);
+  // Check payload
+  for (uint32_t i = 0; i < 386; i++)
+    assertEqual(encoded[7 + i], LONG_TEXT[i]);
+  free(encoded);
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)
