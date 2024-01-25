@@ -60,6 +60,8 @@ DECLARE_FIELD_SETTER(payload, uint32_t)
 
 uint8_t *NdefRecord::get_type() { return type; }
 
+uint8_t NdefRecord::get_type_length() { return type_length; }
+
 int8_t NdefRecord::set_type(RTD type)
 {
   REALLOC_FIELD_OR_FAIL(type, 1);
@@ -70,7 +72,11 @@ int8_t NdefRecord::set_type(RTD type)
 
 uint8_t *NdefRecord::get_id() { return id; }
 
+uint8_t NdefRecord::get_id_length() { return id_length; }
+
 uint8_t *NdefRecord::get_payload() { return payload; }
+
+uint32_t NdefRecord::get_payload_length() { return payload_length; }
 
 uint8_t *NdefRecord::encode()
 {
