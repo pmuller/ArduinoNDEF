@@ -10,6 +10,7 @@ test(record_constructor_no_arguments)
   assertFalse(record.is_message_begin);
   assertFalse(record.is_message_end);
   assertEqual(record.get_type(), NULL);
+  assertEqual(record.get_id(), NULL);
 }
 
 void setup()

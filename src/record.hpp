@@ -36,6 +36,7 @@ class NdefRecord
     uint8_t *get_type();
     int8_t set_type(uint8_t *type, uint8_t type_length);
     int8_t set_type(RTD type);
+    uint8_t *get_id();
     int8_t set_id(uint8_t *id, uint8_t id_length);
     int8_t set_payload(uint8_t *payload, uint32_t payload_length);
     uint32_t get_encoded_size();

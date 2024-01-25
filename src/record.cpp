@@ -68,6 +68,8 @@ int8_t NdefRecord::set_type(RTD type)
   return NDEF_SUCCESS;
 }
 
+uint8_t *NdefRecord::get_id() { return id; }
+
 uint8_t *NdefRecord::encode()
 {
   SAFE_MALLOC(
