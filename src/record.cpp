@@ -135,7 +135,7 @@ uint32_t NdefRecord::get_encoded_size()
   return 2                              // TNF + flags + type length
        + (payload_length > 255 ? 4 : 1) // payload length size
        + (id_length > 0 ? 1 : 0)        // ID length size
-       + id_length + payload_length;
+       + type_length + id_length + payload_length;
 }
 
 #define INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(size)                                  \
