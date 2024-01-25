@@ -12,6 +12,7 @@ test(record_constructor)
   assertEqual(record.get_type(), NULL);
   assertEqual(record.get_id(), NULL);
   assertEqual(record.get_payload(), NULL);
+  assertEqual(record.get_encoded_size(), (uint32_t)3);
 }
 
 void setup()
