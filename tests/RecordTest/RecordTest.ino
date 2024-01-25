@@ -53,6 +53,33 @@ test(record_encode_short)
   free(encoded);
 }
 
+test(record_decode_short)
+{
+  uint8_t encoded[] = {
+      0b00010001,           // MB=0, ME=0, CF=0, SR=1, IL=0, TNF=0x01
+      1,                    // Type length is 1
+      5,                    // Payload length is 5
+      NdefRecord::RTD_TEXT, // Type is RTD_TEXT
+      'H',
+      'e',
+      'l',
+      'l',
+      'o'
+  };
+  NdefRecord record;
+  assertEqual(record.decode(encoded, sizeof(encoded)), NDEF_SUCCESS);
+  assertEqual(record.get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(record.get_type_length(), (uint8_t)1);
+  assertEqual(record.get_type()[0], (uint8_t)'T');
+  assertEqual(record.get_payload_length(), (uint32_t)5);
+  uint8_t *payload = record.get_payload();
+  assertEqual(payload[0], (uint8_t)'H');
+  assertEqual(payload[1], (uint8_t)'e');
+  assertEqual(payload[2], (uint8_t)'l');
+  assertEqual(payload[3], (uint8_t)'l');
+  assertEqual(payload[4], (uint8_t)'o');
+}
+
 const uint8_t LONG_TEXT[] =
     "For instance, on the planet Earth, man had always assumed that he was more "
     "intelligent than dolphins because he had achieved so much - the wheel, New York, "
