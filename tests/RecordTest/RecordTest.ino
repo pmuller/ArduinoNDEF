@@ -34,8 +34,8 @@ test(record_encode_short)
   record.is_message_begin = true;
   record.is_message_end = true;
   record.set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
-  record.set_type(NdefRecord::RTD_TEXT);
-  record.set_payload((uint8_t *)"Hello", 5);
+  assertEqual(record.set_type(NdefRecord::RTD_TEXT), NDEF_SUCCESS);
+  assertEqual(record.set_payload((uint8_t *)"Hello", 5), NDEF_SUCCESS);
   assertEqual(record.get_encoded_size(), (uint32_t)9);
   uint8_t *encoded = record.encode();
   // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x01
@@ -95,8 +95,8 @@ test(record_encode_long_text)
 {
   NdefRecord record;
   record.set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
-  record.set_type(NdefRecord::RTD_TEXT);
-  record.set_payload((uint8_t *)LONG_TEXT, 386);
+  assertEqual(record.set_type(NdefRecord::RTD_TEXT), NDEF_SUCCESS);
+  assertEqual(record.set_payload((uint8_t *)LONG_TEXT, 386), NDEF_SUCCESS);
   assertEqual(record.get_encoded_size(), (uint32_t)393);
   uint8_t *encoded = record.encode();
   // SR flag is 0, TNF is 0x01
