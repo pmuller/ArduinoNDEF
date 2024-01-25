@@ -3,7 +3,7 @@
 #include <AUnit.h>
 #include <MFRC522v2-NDEF.hpp>
 
-test(record_constructor_no_arguments)
+test(record_constructor)
 {
   NdefRecord record;
   assertEqual(record.get_type_name_format(), NdefRecord::TNF_EMPTY);
