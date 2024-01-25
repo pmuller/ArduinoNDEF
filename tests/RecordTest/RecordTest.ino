@@ -28,6 +28,30 @@ test(record_encode_empty)
   free(encoded);
 }
 
+test(record_encode_short)
+{
+  NdefRecord record;
+  record.set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
+  record.set_type(NdefRecord::RTD_TEXT);
+  record.set_payload((uint8_t *)"Hello", 5);
+  uint8_t *encoded = record.encode();
+  // SR flag is 1, TNF is 0x01
+  assertEqual(encoded[0], (uint8_t)0b00010001);
+  // Type length is 1
+  assertEqual(encoded[1], (uint8_t)1);
+  // Payload length is 5
+  assertEqual(encoded[2], (uint8_t)5);
+  // Type is RTD_TEXT
+  assertEqual(encoded[3], (uint8_t)NdefRecord::RTD_TEXT);
+  // Payload is "Hello"
+  assertEqual(encoded[4], (uint8_t)'H');
+  assertEqual(encoded[5], (uint8_t)'e');
+  assertEqual(encoded[6], (uint8_t)'l');
+  assertEqual(encoded[7], (uint8_t)'l');
+  assertEqual(encoded[8], (uint8_t)'o');
+  free(encoded);
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)
