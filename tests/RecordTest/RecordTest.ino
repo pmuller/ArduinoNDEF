@@ -15,6 +15,19 @@ test(record_constructor)
   assertEqual(record.get_encoded_size(), (uint32_t)3);
 }
 
+test(record_encode_empty)
+{
+  NdefRecord record;
+  uint8_t *encoded = record.encode();
+  // Only the SR flag is 1
+  assertEqual(encoded[0], (uint8_t)0b00010000);
+  // Type length is 0
+  assertEqual(encoded[1], (uint8_t)0);
+  // Payload length is 0
+  assertEqual(encoded[2], (uint8_t)0);
+  free(encoded);
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)
