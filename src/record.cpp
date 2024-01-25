@@ -45,22 +45,17 @@ void NdefRecord::set_type_name_format(TNF type_name_format)
   }                                                                                    \
   this->name = pointer;
 
-#define DECLARE_FIELD_SETTER(name, uint32_type)                                        \
-  int8_t NdefRecord::set_##name(uint8_t *name, uint32_type name##_length)              \
-  {                                                                                    \
-    REALLOC_FIELD_OR_FAIL(name, name##_length);                                        \
-    memcpy(this->name, name, name##_length);                                           \
-    this->name##_length = name##_length;                                               \
-    return NDEF_SUCCESS;                                                               \
-  }
-
-DECLARE_FIELD_SETTER(type, uint8_t)
-DECLARE_FIELD_SETTER(id, uint8_t)
-DECLARE_FIELD_SETTER(payload, uint32_t)
+#define SET_FIELD(name)                                                                \
+  REALLOC_FIELD_OR_FAIL(name, name##_length);                                          \
+  memcpy(this->name, name, name##_length);                                             \
+  this->name##_length = name##_length;                                                 \
+  return NDEF_SUCCESS;
 
 uint8_t *NdefRecord::get_type() { return type; }
 
 uint8_t NdefRecord::get_type_length() { return type_length; }
+
+int8_t NdefRecord::set_type(uint8_t *type, uint8_t type_length) { SET_FIELD(type); }
 
 int8_t NdefRecord::set_type(RTD type)
 {
@@ -74,9 +69,16 @@ uint8_t *NdefRecord::get_id() { return id; }
 
 uint8_t NdefRecord::get_id_length() { return id_length; }
 
+int8_t NdefRecord::set_id(uint8_t *id, uint8_t id_length) { SET_FIELD(id); }
+
 uint8_t *NdefRecord::get_payload() { return payload; }
 
 uint32_t NdefRecord::get_payload_length() { return payload_length; }
+
+int8_t NdefRecord::set_payload(uint8_t *payload, uint32_t payload_length)
+{
+  SET_FIELD(payload);
+}
 
 uint8_t *NdefRecord::encode()
 {
