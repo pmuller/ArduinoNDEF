@@ -158,7 +158,7 @@ char *build_uri_from_ndef_uri_payload(struct NdefUriPayload *payload)
   }
 
   memcpy(uri, prefix, prefix_length);
-  memcpy(uri + prefix_length, payload->data + 1, uri_length);
+  memcpy(uri + prefix_length, payload->data + 1, payload->length - 1);
   uri[uri_length - 1] = '\0';
 
   return uri;
