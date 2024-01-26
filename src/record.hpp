@@ -1,10 +1,6 @@
 #pragma once
 #include <stdint.h>
 
-#define NDEF_RECORD_DECODE_ERROR_INVALID_LENGTH -2
-#define NDEF_RECORD_DECODE_ERROR_CHUNK_NOT_SUPPORTED -3
-#define NDEF_RECORD_ENCODE_ERROR_MALLOC_FAILED NULL
-
 /**
  * @brief A NDEF message record
  */
