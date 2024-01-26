@@ -56,16 +56,13 @@ void free_ndef_uri_payload(struct NdefUriPayload *payload)
 
 struct NdefUriPayload *build_ndef_uri_payload(const char *uri)
 {
-  size_t payload_length = strlen(uri);
+  size_t uri_length = strlen(uri);
 
-  if (payload_length > 0xff)
+  if (uri_length > 0xff)
   {
     PRINTLN(F("build_ndef_uri_payload uri too long"));
     return nullptr;
   }
-
-  // Increment payload length to account for the URI identifier code
-  payload_length++;
 
   const char *prefix;
   uint8_t prefix_length;
@@ -81,7 +78,7 @@ struct NdefUriPayload *build_ndef_uri_payload(const char *uri)
     if (strncmp(uri, prefix, prefix_length) == 0)
     {
       code = NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].code;
-      payload_length -= prefix_length;
+      uri_length -= prefix_length;
       uri_offset = prefix_length;
       break;
     }
@@ -96,8 +93,8 @@ struct NdefUriPayload *build_ndef_uri_payload(const char *uri)
     return nullptr;
   }
 
-  payload->length = payload_length;
-  payload->data = (uint8_t *)malloc(payload_length);
+  payload->length = uri_length + 1; // Add 1 for the identifier code byte
+  payload->data = (uint8_t *)malloc(payload->length);
 
   if (payload->data == nullptr)
   {
@@ -107,7 +104,7 @@ struct NdefUriPayload *build_ndef_uri_payload(const char *uri)
   }
 
   payload->data[0] = code;
-  memcpy(payload->data + 1, &uri[uri_offset], payload_length);
+  memcpy(payload->data + 1, &uri[uri_offset], uri_length);
 
   return payload;
 }
