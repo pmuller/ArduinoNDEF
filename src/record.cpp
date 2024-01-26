@@ -86,7 +86,7 @@ uint8_t *NdefRecord::encode()
       uint8_t *,
       result,
       get_encoded_size(),
-      NDEF_RECORD_ENCODE_ERROR_MALLOC_FAILED,
+      NDEF_ERROR_RECORD_ENCODE_MALLOC_FAILED,
       {}
   );
   uint8_t *result_ptr = result;
@@ -155,7 +155,7 @@ uint32_t NdefRecord::get_encoded_size()
     PRINT(F(" < "));                                                                   \
     PRINT(minimum_length);                                                             \
     PRINTLN();                                                                         \
-    return NDEF_RECORD_DECODE_ERROR_INVALID_LENGTH;                                    \
+    return NDEF_ERROR_RECORD_DECODE_INVALID_LENGTH;                                    \
   }
 
 int8_t NdefRecord::decode(uint8_t *data, uint32_t data_length)
@@ -181,7 +181,7 @@ int8_t NdefRecord::decode(uint8_t *data, uint32_t data_length)
   if (is_chunked)
   {
     PRINTLN(F("NdefRecord::decode failed: chunked record not supported"));
-    return NDEF_RECORD_DECODE_ERROR_CHUNK_NOT_SUPPORTED;
+    return NDEF_ERROR_RECORD_DECODE_CHUNK_NOT_SUPPORTED;
   }
 
   // Type length
