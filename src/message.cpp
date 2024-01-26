@@ -93,7 +93,7 @@ int8_t NdefMessage::add_text_record(char *text, const char *language_code)
   return NDEF_SUCCESS;
 }
 
-int8_t NdefMessage::add_uri_record(char *uri)
+int8_t NdefMessage::add_uri_record(const char *uri)
 {
   // Prepare payload
   uint32_t uri_length = strlen(uri);
