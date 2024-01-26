@@ -2,6 +2,7 @@
 
 #include "constants.hpp"
 #include "macros.hpp"
+#include "uri.hpp"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -95,19 +96,22 @@ int8_t NdefMessage::add_text_record(char *text, const char *language_code)
 
 int8_t NdefMessage::add_uri_record(const char *uri)
 {
-  // Prepare payload
-  uint32_t uri_length = strlen(uri);
-  uint32_t payload_length = 1 + uri_length;
-  uint8_t payload[payload_length];
-  payload[0] = 0;
-  memcpy(payload + 1, uri, uri_length);
-
-  // Add record
   NdefRecord *record = new NdefRecord();
   record->set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
   int8_t error;
   RETURN_IF_ERROR(record->set_type(NdefRecord::RTD_URI), {});
-  RETURN_IF_ERROR(record->set_payload(payload, payload_length), {});
+  struct NdefUriPayload *payload = build_ndef_uri_payload(uri);
+
+  if (payload == nullptr)
+  {
+    PRINTLN(F("NdefMessage::add_uri_record failed to build URI payload"));
+    return NDEF_ERROR_URI_PAYLOAD_FAILURE;
+  }
+
+  RETURN_IF_ERROR(record->set_payload(payload->data, payload->length), {
+    free_ndef_uri_payload(payload);
+  });
+  free_ndef_uri_payload(payload);
   add_record(record);
 
   return NDEF_SUCCESS;

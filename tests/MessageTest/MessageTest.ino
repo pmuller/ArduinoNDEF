@@ -88,6 +88,36 @@ test(message_add_mime_media_record)
   free(encoded);
 }
 
+test(message_add_uri_record)
+{
+  NdefMessage message;
+  assertEqual(message.add_uri_record("https://www.google.com"), NDEF_SUCCESS);
+  assertEqual(message.get_record_count(), (uint8_t)1);
+  assertEqual(message.get_encoded_size(), (uint32_t)15);
+  uint8_t *encoded = message.encode();
+  // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x01
+  assertEqual(encoded[0], (uint8_t)0b11010001);
+  // Type length is 1
+  assertEqual(encoded[1], (uint8_t)1);
+  // Payload length is 14
+  assertEqual(encoded[2], (uint8_t)11);
+  // Type is RTD_URI
+  assertEqual(encoded[3], (uint8_t)NdefRecord::RTD_URI);
+  // Payload is "\2google.com"
+  assertEqual(encoded[4], (uint8_t)0x02);
+  assertEqual(encoded[5], (uint8_t)'g');
+  assertEqual(encoded[6], (uint8_t)'o');
+  assertEqual(encoded[7], (uint8_t)'o');
+  assertEqual(encoded[8], (uint8_t)'g');
+  assertEqual(encoded[9], (uint8_t)'l');
+  assertEqual(encoded[10], (uint8_t)'e');
+  assertEqual(encoded[11], (uint8_t)'.');
+  assertEqual(encoded[12], (uint8_t)'c');
+  assertEqual(encoded[13], (uint8_t)'o');
+  assertEqual(encoded[14], (uint8_t)'m');
+  free(encoded);
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)

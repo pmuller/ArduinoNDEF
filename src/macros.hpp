@@ -39,7 +39,9 @@
 #ifdef DEBUG
 #define PRINT(value) Serial.print(value)
 #define PRINTLN(value) Serial.println(value)
+#define PRINTLN_DEC(value) Serial.println(value, DEC)
 #else // DEBUG
 #define PRINT(value) (void)0
 #define PRINTLN(value) (void)0
+#define PRINTLN_DEC(value) (void)0
 #endif // DEBUG
