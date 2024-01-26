@@ -13,9 +13,6 @@ class NdefRecord
   public:
     /**
      * @brief Type Name Format
-     *
-     * @ref
-     * https://freemindtronic.com/wp-content/uploads/2022/02/NFC-Data-Exchange-Format-NDEF.pdf
      */
     enum TNF
     {
@@ -31,9 +28,6 @@ class NdefRecord
 
     /**
      * @brief NFC Record Type Definition
-     *
-     * @ref
-     * https://engineering.purdue.edu/ece477/Archive/2012/Spring/S12-Grp14/Specs/NFC/NFCRTD.pdf
      */
     enum RTD
     {
