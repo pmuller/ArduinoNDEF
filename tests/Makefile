@@ -9,7 +9,7 @@ test: build
 	set -e; \
 	for i in *Test/Makefile; do \
 		echo '==== Test:' $$(dirname $$i); \
-		$(MAKE) -C $$(dirname $$i) run; \
+		$(MAKE) -C $$(dirname $$i) test; \
 	done
 
 clean:
