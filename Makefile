@@ -6,7 +6,7 @@ clean:
 	find . -name '*.o' -o -name '*.out' -exec rm -f {} \;
 
 build:
-	make -C tests
+	EXTRA_CXXFLAGS=-g make -C tests
 
 test: build
 	make -C tests runtests
