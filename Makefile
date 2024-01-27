@@ -3,7 +3,7 @@
 all: clean test
 
 clean:
-	find . -name '*.o' -o -name '*.out' -exec rm -f {} \;
+	make -C tests clean
 
 build:
 	EXTRA_CXXFLAGS=-g make -C tests
