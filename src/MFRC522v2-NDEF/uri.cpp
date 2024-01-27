@@ -2,7 +2,6 @@
 
 #include "macros.hpp"
 
-#include <stdlib.h>
 #include <string.h>
 
 static const NdefUriPrefix
@@ -45,25 +44,9 @@ static const NdefUriPrefix
         {0x23,                   "urn:nfc:"},
 };
 
-void free_ndef_uri_payload(struct NdefUriPayload *payload)
-{
-  if (payload != nullptr)
-  {
-    free(payload->data);
-    free(payload);
-  }
-}
-
-struct NdefUriPayload *build_ndef_uri_payload(const char *uri)
+NdefUriPayload::NdefUriPayload(const char *uri)
 {
   size_t uri_length = strlen(uri);
-
-  if (uri_length > 0xff)
-  {
-    PRINTLN(F("build_ndef_uri_payload uri too long"));
-    return nullptr;
-  }
-
   const char *prefix;
   uint8_t prefix_length;
   uint8_t uri_offset = 0;
@@ -84,50 +67,52 @@ struct NdefUriPayload *build_ndef_uri_payload(const char *uri)
     }
   }
 
-  struct NdefUriPayload *payload =
-      (struct NdefUriPayload *)malloc(sizeof(struct NdefUriPayload));
+  length = uri_length + 1; // Add 1 for the identifier code byte
+  uint8_t *data = new uint8_t[length];
 
-  if (payload == nullptr)
+  if (data == nullptr)
   {
-    PRINTLN(F("build_ndef_uri_payload failed to allocate payload memory"));
-    return nullptr;
+    PRINTLN(F("NdefUriPayload failed to allocate data memory"));
+    return;
   }
 
-  payload->length = uri_length + 1; // Add 1 for the identifier code byte
-  payload->data = (uint8_t *)malloc(payload->length);
-
-  if (payload->data == nullptr)
-  {
-    PRINTLN(F("build_ndef_uri_payload failed to allocate payload data memory"));
-    free(payload);
-    return nullptr;
-  }
-
-  payload->data[0] = code;
-  memcpy(payload->data + 1, &uri[uri_offset], uri_length);
-
-  return payload;
+  data[0] = code;
+  memcpy(data + 1, &uri[uri_offset], uri_length);
+  this->data = data;
 }
 
-char *build_uri_from_ndef_uri_payload(struct NdefUriPayload *payload)
+bool NdefUriPayload::is_valid() const
 {
-  if (payload == nullptr)
-  {
-    PRINTLN(F("build_uri_from_ndef_uri_payload payload is null"));
-    return nullptr;
-  }
+  if (data == nullptr || length < 2)
+    return false;
 
-  if (payload->length < 2)
-  {
-    PRINTLN(F("build_uri_from_ndef_uri_payload payload length is too short"));
+  uint8_t code = data[0];
+
+  for (uint8_t i = 0; i < NDEF_URI_CODE_IDENTIFIER_COUNT; i++)
+    if (code == NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].code)
+      return true;
+
+  return false;
+}
+
+uint8_t NdefUriPayload::get_code() const
+{
+  if (!is_valid())
+    return 0;
+
+  return data[0];
+}
+
+const char *NdefUriPayload::get_uri() const
+{
+  if (!is_valid())
     return nullptr;
-  }
 
   const char *prefix = nullptr;
   uint8_t prefix_length = 0;
   char *uri = nullptr;
   size_t uri_length = 0;
-  uint8_t code = payload->data[0];
+  uint8_t code = get_code();
 
   for (uint8_t i = 0; i < NDEF_URI_CODE_IDENTIFIER_COUNT; i++)
   {
@@ -139,17 +124,12 @@ char *build_uri_from_ndef_uri_payload(struct NdefUriPayload *payload)
     }
   }
 
-  if (prefix == nullptr)
-  {
-    PRINT(F("build_uri_from_ndef_uri_payload unknown code: "));
-    PRINTLN_DEC(code);
-    return nullptr;
-  }
+  // We know that prefix *IS* populated because we called is_valid() earlier
 
   // Implicitely includes null terminator byte because we do not subtract the identifier
   // code byte
-  uri_length = prefix_length + payload->length;
-  uri = (char *)malloc(uri_length);
+  uri_length = prefix_length + length;
+  uri = new char[uri_length];
 
   if (uri == nullptr)
   {
@@ -158,7 +138,7 @@ char *build_uri_from_ndef_uri_payload(struct NdefUriPayload *payload)
   }
 
   memcpy(uri, prefix, prefix_length);
-  memcpy(uri + prefix_length, payload->data + 1, payload->length - 1);
+  memcpy(uri + prefix_length, data + 1, length - 1);
   uri[uri_length - 1] = '\0';
 
   return uri;

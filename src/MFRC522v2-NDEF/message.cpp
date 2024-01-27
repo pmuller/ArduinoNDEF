@@ -100,18 +100,15 @@ int8_t NdefMessage::add_uri_record(const char *uri)
   record->set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
   int8_t error;
   RETURN_IF_ERROR(record->set_type(NdefRecord::RTD_URI), {});
-  struct NdefUriPayload *payload = build_ndef_uri_payload(uri);
+  NdefUriPayload payload(uri);
 
-  if (payload == nullptr)
+  if (!payload.is_valid())
   {
     PRINTLN(F("NdefMessage::add_uri_record failed to build URI payload"));
     return NDEF_ERROR_URI_PAYLOAD_FAILURE;
   }
 
-  RETURN_IF_ERROR(record->set_payload(payload->data, payload->length), {
-    free_ndef_uri_payload(payload);
-  });
-  free_ndef_uri_payload(payload);
+  RETURN_IF_ERROR(record->set_payload(payload.get_data(), payload.get_length()), {});
   add_record(record);
 
   return NDEF_SUCCESS;

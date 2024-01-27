@@ -10,23 +10,22 @@ struct NdefUriPrefix
     const char *prefix;
 };
 
-struct NdefUriPayload
+class NdefUriPayload
 {
-    uint8_t *data;
+  public:
+    NdefUriPayload(const uint8_t *data, uint8_t length) : data(data), length(length){};
+    NdefUriPayload() : data(nullptr), length(0){};
+    NdefUriPayload(const NdefUriPayload &other) :
+        data(other.data), length(other.length){};
+    NdefUriPayload(const char *uri);
+    ~NdefUriPayload() { delete[] data; };
+    bool is_valid() const;
+    uint8_t get_code() const;
+    const uint8_t *get_data() const { return data; };
+    uint8_t get_length() const { return length; };
+    const char *get_uri() const;
+
+  private:
+    const uint8_t *data;
     uint8_t length;
 };
-
-/*
- * @brief Build an NDEF URI payload from a URI string.
- */
-struct NdefUriPayload *build_ndef_uri_payload(const char *uri);
-
-/*
- * @brief Build a URI string from an NDEF URI payload.
- */
-char *build_uri_from_ndef_uri_payload(struct NdefUriPayload *payload);
-
-/*
- * @brief Free memory of an NDEF URI payload struct.
- */
-void free_ndef_uri_payload(struct NdefUriPayload *payload);

@@ -138,7 +138,7 @@ class NdefRecord
      * @param payload_length The payload length
      * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
      */
-    int8_t set_payload(uint8_t *payload, uint32_t payload_length);
+    int8_t set_payload(const uint8_t *payload, uint32_t payload_length);
 
     /**
      * @brief Get the size of the encoded NDEF record

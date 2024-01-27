@@ -75,7 +75,7 @@ uint8_t *NdefRecord::get_payload() { return payload; }
 
 uint32_t NdefRecord::get_payload_length() { return payload_length; }
 
-int8_t NdefRecord::set_payload(uint8_t *payload, uint32_t payload_length)
+int8_t NdefRecord::set_payload(const uint8_t *payload, uint32_t payload_length)
 {
   SET_FIELD(payload);
 }
