@@ -14,5 +14,4 @@ jobs:
           git clone https://github.com/bxparks/AUnit
       - name: Run tests
         run: |
-          make -C tests
-          make -C tests runtests
+          make test
