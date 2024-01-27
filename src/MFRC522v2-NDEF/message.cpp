@@ -74,27 +74,22 @@ int8_t NdefMessage::add_mime_media_record(
 
 int8_t NdefMessage::add_text_record(char *text, const char *language_code)
 {
-  // Prepare header
-  uint32_t language_code_length = strlen(language_code);
-  uint32_t header_length = 1 + language_code_length;
-  uint8_t header[header_length];
-  header[0] = language_code_length;
-  memcpy(header + 1, language_code, language_code_length);
+  auto record = NdefRecord::create_text_record(text, language_code);
 
-  // Prepare payload
-  uint32_t text_length = strlen(text);
-  uint32_t payload_length = header_length + text_length;
-  uint8_t payload[payload_length];
-  memcpy(payload, header, header_length);
-  memcpy(payload + header_length, text, text_length);
+  if (record == nullptr)
+  {
+    PRINTLN(F("NdefMessage::add_text_record failed to create text record"));
+    return NDEF_ERROR_TEXT_RECORD_CREATION_FAILED;
+  }
 
-  // Add record
-  NdefRecord *record = new NdefRecord();
-  record->set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
-  int8_t error;
-  RETURN_IF_ERROR(record->set_type(NdefRecord::RTD_TEXT), {});
-  RETURN_IF_ERROR(record->set_payload(payload, payload_length), {});
-  add_record(record);
+  int8_t error = add_record(record);
+
+  if (error != NDEF_SUCCESS)
+  {
+    delete record;
+    PRINTLN(F("NdefMessage::add_text_record failed to add record"));
+    return error;
+  }
 
   return NDEF_SUCCESS;
 }
