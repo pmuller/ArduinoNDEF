@@ -19,18 +19,23 @@ NdefMessage::~NdefMessage()
   for (uint8_t i = 0; i < record_count; i++)
     delete records[i];
 
-  free(records);
+  delete[] records;
 }
 
 int8_t NdefMessage::add_record(NdefRecord *record)
 {
-  NdefRecord **records =
-      (NdefRecord **)realloc(this->records, sizeof(NdefRecord *) * (record_count + 1));
+  NdefRecord **records = new NdefRecord *[record_count + 1];
 
   if (records == nullptr)
   {
     PRINTLN(F("NdefMessage::add_record failed to allocate memory"));
     return NDEF_ERROR_MALLOC_FAILED;
+  }
+
+  if (this->records != nullptr)
+  {
+    memcpy(records, this->records, sizeof(NdefRecord *) * record_count);
+    delete[] this->records;
   }
 
   this->records = records;
@@ -147,8 +152,14 @@ uint32_t NdefMessage::get_encoded_size()
 
 uint8_t *NdefMessage::encode()
 {
-  SAFE_MALLOC(uint8_t *, result, get_encoded_size(), nullptr, {});
+  auto result = new uint8_t[get_encoded_size()];
   uint8_t *result_ptr = result;
+
+  if (result == nullptr)
+  {
+    PRINTLN(F("NdefMessage::encode failed to allocate memory"));
+    return nullptr;
+  }
 
   for (uint8_t i = 0; i < record_count; i++)
   {

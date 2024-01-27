@@ -9,32 +9,6 @@
     return error;                                                                      \
   }
 
-/** malloc helper macro
- *
- * type:                    pointer type
- * pointer:                 pointer name
- * size:                    size of the memory to allocate
- * error_code:              error code to return if malloc fails
- * error_handling_block:    code to execute if malloc fails
- */
-#define SAFE_MALLOC(type, pointer, size, error_code, error_handling_block)             \
-  type pointer = (type)malloc(size);                                                   \
-  if (pointer == NULL)                                                                 \
-  {                                                                                    \
-    error_handling_block;                                                              \
-    PRINT(F("malloc failed: pointer="));                                               \
-    PRINT(#pointer);                                                                   \
-    PRINT(F(" size="));                                                                \
-    PRINT(size);                                                                       \
-    PRINT(F(" func="));                                                                \
-    PRINT(__FUNCTION__);                                                               \
-    PRINT(F(" file="));                                                                \
-    PRINT(__FILE__);                                                                   \
-    PRINT(F(" line="));                                                                \
-    PRINTLN(__LINE__);                                                                 \
-    return error_code;                                                                 \
-  }
-
 // Only log debug messages when DEBUG is defined
 #ifdef DEBUG
 #define PRINT(value) Serial.print(value)

@@ -22,7 +22,7 @@ test(message_add_one_record)
   assertEqual(encoded[0], (uint8_t)0b11010000);
   assertEqual(encoded[1], (uint8_t)0);
   assertEqual(encoded[2], (uint8_t)0);
-  free(encoded);
+  delete[] encoded;
 }
 
 test(message_add_three_records)
@@ -49,7 +49,7 @@ test(message_add_three_records)
   assertEqual(encoded[6], (uint8_t)0b01010000);
   assertEqual(encoded[7], (uint8_t)0);
   assertEqual(encoded[8], (uint8_t)0);
-  free(encoded);
+  delete[] encoded;
 }
 
 test(message_add_mime_media_record)
@@ -85,7 +85,7 @@ test(message_add_mime_media_record)
   assertEqual(encoded[15], (uint8_t)'l');
   assertEqual(encoded[16], (uint8_t)'l');
   assertEqual(encoded[17], (uint8_t)'o');
-  free(encoded);
+  delete[] encoded;
 }
 
 test(message_add_uri_record)
@@ -115,7 +115,7 @@ test(message_add_uri_record)
   assertEqual(encoded[12], (uint8_t)'c');
   assertEqual(encoded[13], (uint8_t)'o');
   assertEqual(encoded[14], (uint8_t)'m');
-  free(encoded);
+  delete[] encoded;
 }
 
 void setup()
