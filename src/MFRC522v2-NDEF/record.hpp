@@ -1,6 +1,19 @@
 #pragma once
 #include <stdint.h>
 
+// Message Begin flag (MB)
+#define NDEF_RECORD_HEADER_MB_FLAG_MASK 0b10000000
+// Message End flag (ME)
+#define NDEF_RECORD_HEADER_ME_FLAG_MASK 0b01000000
+// Chunk Flag (CF)
+#define NDEF_RECORD_HEADER_CF_FLAG_MASK 0b00100000
+// Short Record flag (SR)
+#define NDEF_RECORD_HEADER_SR_FLAG_MASK 0b00010000
+// ID Length flag (IL)
+#define NDEF_RECORD_HEADER_IL_FLAG_MASK 0b00001000
+// Type Name Format
+#define NDEF_RECORD_HEADER_TNF_MASK 0b00000111
+
 /**
  * @brief A NDEF message record
  */
@@ -41,9 +54,10 @@ class NdefRecord
     bool is_message_end;
 
     /**
-     * @brief Create a new NDEF record
+     * @brief Create an empty NDEF record
      */
     NdefRecord();
+
     /**
      * @brief Destroy the NDEF record
      */
@@ -159,9 +173,9 @@ class NdefRecord
      *
      * @param data Encoded NDEF record
      * @param data_length The data length
-     * @return uint8_t NDEF_SUCCESS or NDEF_RECORD_DECODE_ERROR_*
+     * @return NdefRecord* The decoded NDEF record
      */
-    int8_t decode(uint8_t *data, uint32_t data_length);
+    static NdefRecord *decode(uint8_t *data, uint32_t data_length);
 
   private:
     TNF type_name_format;

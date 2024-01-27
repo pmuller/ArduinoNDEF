@@ -22,9 +22,9 @@ NdefRecord::NdefRecord()
 
 NdefRecord::~NdefRecord()
 {
-  free(type);
-  free(id);
-  free(payload);
+  delete[] type;
+  delete[] id;
+  delete[] payload;
 }
 
 NdefRecord::TNF NdefRecord::get_type_name_format() { return type_name_format; }
@@ -35,7 +35,7 @@ void NdefRecord::set_type_name_format(TNF type_name_format)
 }
 
 #define REALLOC_FIELD_OR_FAIL(name, size)                                              \
-  uint8_t *pointer = (uint8_t *)realloc(this->name, size);                             \
+  auto pointer = new uint8_t[size];                                                    \
   if (pointer == nullptr)                                                              \
   {                                                                                    \
     PRINT(F("NdefRecord::set_"));                                                      \
@@ -43,6 +43,7 @@ void NdefRecord::set_type_name_format(TNF type_name_format)
     PRINTLN(F(" failed to allocate memory"));                                          \
     return NDEF_ERROR_MALLOC_FAILED;                                                   \
   }                                                                                    \
+  delete[] this->name;                                                                 \
   this->name = pointer;
 
 #define SET_FIELD(name)                                                                \
@@ -82,26 +83,26 @@ int8_t NdefRecord::set_payload(const uint8_t *payload, uint32_t payload_length)
 
 uint8_t *NdefRecord::encode()
 {
-  SAFE_MALLOC(
-      uint8_t *,
-      result,
-      get_encoded_size(),
-      NDEF_ERROR_RECORD_ENCODE_MALLOC_FAILED,
-      {}
-  );
-  uint8_t *result_ptr = result;
+  auto result = new uint8_t[get_encoded_size()];
+  auto result_ptr = result;
 
-  // Build TNF + flags uint8_t
+  if (result == nullptr)
+  {
+    PRINTLN(F("NdefRecord::encode failed to allocate memory"));
+    return nullptr;
+  }
+
+  // Build header
   uint8_t tnf_flags = 0;
-  if (is_message_begin) // MB
-    tnf_flags |= 0b10000000;
-  if (is_message_end) // ME
-    tnf_flags |= 0b01000000;
-  if (payload_length < 256) // SR
-    tnf_flags |= 0b00010000;
-  if (id_length > 0) // IL
-    tnf_flags |= 0b00001000;
-  tnf_flags |= type_name_format; // TNF
+  if (is_message_begin)
+    tnf_flags |= NDEF_RECORD_HEADER_MB_FLAG_MASK;
+  if (is_message_end)
+    tnf_flags |= NDEF_RECORD_HEADER_ME_FLAG_MASK;
+  if (payload_length < 256)
+    tnf_flags |= NDEF_RECORD_HEADER_SR_FLAG_MASK;
+  if (id_length > 0)
+    tnf_flags |= NDEF_RECORD_HEADER_IL_FLAG_MASK;
+  tnf_flags |= type_name_format;
 
   *result_ptr++ = tnf_flags;
   *result_ptr++ = type_length;
@@ -150,18 +151,33 @@ uint32_t NdefRecord::get_encoded_size()
   minimum_length += size;                                                              \
   if (data_length < minimum_length)                                                    \
   {                                                                                    \
+    delete record;                                                                     \
     PRINT(F("NdefRecord::decode failed: data_length < minimum_length: "));             \
     PRINT(data_length);                                                                \
     PRINT(F(" < "));                                                                   \
     PRINT(minimum_length);                                                             \
     PRINTLN();                                                                         \
-    return NDEF_ERROR_RECORD_DECODE_INVALID_LENGTH;                                    \
+    return nullptr;                                                                    \
   }
 
-int8_t NdefRecord::decode(uint8_t *data, uint32_t data_length)
+NdefRecord *NdefRecord::decode(uint8_t *data, uint32_t data_length)
 {
   uint8_t *data_ptr = data;
   uint8_t minimum_length = 0;
+
+  // Decode flags and type name format
+  uint8_t tnf_flags = *data_ptr++;
+
+  if (tnf_flags & NDEF_RECORD_HEADER_CF_FLAG_MASK)
+  {
+    PRINTLN(F("NdefRecord::decode failed: chunked record not supported"));
+    return nullptr;
+  }
+
+  auto record = new NdefRecord();
+  record->is_message_begin = tnf_flags & NDEF_RECORD_HEADER_MB_FLAG_MASK;
+  record->is_message_end = tnf_flags & NDEF_RECORD_HEADER_ME_FLAG_MASK;
+  record->type_name_format = (TNF)(tnf_flags & NDEF_RECORD_HEADER_TNF_MASK);
 
   // Expect at least:
   // - 1 uint8_t for flags + TNF
@@ -169,83 +185,68 @@ int8_t NdefRecord::decode(uint8_t *data, uint32_t data_length)
   // - 1 uint8_t for short payload length
   INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(3);
 
-  // Decode flags and type name format
-  uint8_t tnf_flags = *data_ptr++;
-  bool is_message_begin = tnf_flags & 0b10000000;
-  bool is_message_end = tnf_flags & 0b01000000;
-  bool is_chunked = tnf_flags & 0b00100000;
-  bool is_short_record = tnf_flags & 0b00010000;
-  bool has_id_length = tnf_flags & 0b00001000;
-  TNF type_name_format = (TNF)(tnf_flags & 0b00000111);
-
-  if (is_chunked)
-  {
-    PRINTLN(F("NdefRecord::decode failed: chunked record not supported"));
-    return NDEF_ERROR_RECORD_DECODE_CHUNK_NOT_SUPPORTED;
-  }
-
   // Type length
-  uint8_t type_length = *data_ptr++;
-  INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(type_length);
+  record->type_length = *data_ptr++;
+  INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(record->type_length);
 
   // Payload length
-  uint32_t payload_length;
-  if (is_short_record)
-  {
-    payload_length = *data_ptr++;
-  }
+  if (tnf_flags & NDEF_RECORD_HEADER_SR_FLAG_MASK)
+    record->payload_length = *data_ptr++;
   else
   {
     // Expect at least 3 more uint8_ts to store payload length
     INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(3);
     // Extract payload_length
-    payload_length = *data_ptr++ << 24;
-    payload_length |= *data_ptr++ << 16;
-    payload_length |= *data_ptr++ << 8;
-    payload_length |= *data_ptr++;
+    record->payload_length = *data_ptr++ << 24;
+    record->payload_length |= *data_ptr++ << 16;
+    record->payload_length |= *data_ptr++ << 8;
+    record->payload_length |= *data_ptr++;
   }
-  INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(payload_length);
+  INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(record->payload_length);
 
   // ID length
-  uint8_t id_length = 0;
-  if (has_id_length) // Has ID length field
+  if (tnf_flags & 0b00001000) // IL=1
   {
-    id_length = *data_ptr++;
-    INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(id_length);
+    record->id_length = *data_ptr++;
+    INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(record->id_length);
   }
+  else
+    record->id_length = 0;
 
   // Type
-  SAFE_MALLOC(uint8_t *, type, type_length, NDEF_ERROR_MALLOC_FAILED, {});
-  memcpy(type, data_ptr, type_length);
-  data_ptr += type_length;
+  record->type = new uint8_t[record->type_length];
+
+  if (record->type == nullptr)
+    goto MALLOC_FAILED;
+
+  memcpy(record->type, data_ptr, record->type_length);
+  data_ptr += record->type_length;
 
   // ID
-  uint8_t *id = nullptr;
-  if (id_length > 0)
+  if (record->id_length > 0)
   {
-    SAFE_MALLOC(uint8_t *, id, id_length, NDEF_ERROR_MALLOC_FAILED, { free(type); });
-    memcpy(id, data_ptr, id_length);
-    data_ptr += id_length;
+    record->id = new uint8_t[record->id_length];
+
+    if (record->id == nullptr)
+      goto MALLOC_FAILED;
+
+    memcpy(record->id, data_ptr, record->id_length);
+    data_ptr += record->id_length;
   }
 
   // Payload
-  SAFE_MALLOC(uint8_t *, payload, payload_length, NDEF_ERROR_MALLOC_FAILED, {
-    free(type);
-    free(id);
-  });
-  memcpy(payload, data_ptr, payload_length);
-  data_ptr += payload_length;
+  record->payload = new uint8_t[record->payload_length];
 
-  // Initialize record
-  this->is_message_begin = is_message_begin;
-  this->is_message_end = is_message_end;
-  this->type_name_format = type_name_format;
-  this->type = type;
-  this->type_length = type_length;
-  this->id = id;
-  this->id_length = id_length;
-  this->payload = payload;
-  this->payload_length = payload_length;
+  if (record->payload == nullptr)
+    goto MALLOC_FAILED;
 
-  return NDEF_SUCCESS;
+  memcpy(record->payload, data_ptr, record->payload_length);
+  data_ptr += record->payload_length;
+
+  return record;
+
+MALLOC_FAILED:
+  PRINTLN(F("NdefRecord::decode failed to allocate memory"));
+  delete record;
+  return nullptr;
 }

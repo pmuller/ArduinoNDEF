@@ -156,7 +156,7 @@ uint8_t *NdefMessage::encode()
     uint32_t record_encoded_size = records[i]->get_encoded_size();
     memcpy(result_ptr, record_encoded, record_encoded_size);
     result_ptr += record_encoded_size;
-    free(record_encoded);
+    delete[] record_encoded;
   }
 
   return result;
@@ -170,10 +170,16 @@ int8_t NdefMessage::decode(uint8_t *data, uint32_t data_length)
 
   while (data_ptr < data_end && !found_last_message)
   {
-    NdefRecord *record = new NdefRecord();
-    int8_t error;
-    RETURN_IF_ERROR(record->decode(data_ptr, data_end - data_ptr), { delete record; });
+    auto record = NdefRecord::decode(data_ptr, data_end - data_ptr);
+
+    if (record == nullptr)
+    {
+      PRINTLN(F("NdefMessage::decode failed"));
+      return -1;
+    }
+
     found_last_message = record->is_message_end;
+    int8_t error;
     RETURN_IF_ERROR(add_record(record), { delete record; });
     data_ptr += record->get_encoded_size();
   }

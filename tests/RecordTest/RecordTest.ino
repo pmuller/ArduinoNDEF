@@ -25,7 +25,7 @@ test(record_encode_empty)
   assertEqual(encoded[1], (uint8_t)0);
   // Payload length is 0
   assertEqual(encoded[2], (uint8_t)0);
-  free(encoded);
+  delete[] encoded;
 }
 
 test(record_encode_short)
@@ -52,7 +52,7 @@ test(record_encode_short)
   assertEqual(encoded[6], (uint8_t)'l');
   assertEqual(encoded[7], (uint8_t)'l');
   assertEqual(encoded[8], (uint8_t)'o');
-  free(encoded);
+  delete[] encoded;
 }
 
 test(record_decode_short)
@@ -68,20 +68,20 @@ test(record_decode_short)
       'l',
       'o'
   };
-  NdefRecord record;
-  assertEqual(record.decode(encoded, sizeof(encoded)), NDEF_SUCCESS);
-  assertTrue(record.is_message_begin);
-  assertTrue(record.is_message_end);
-  assertEqual(record.get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
-  assertEqual(record.get_type_length(), (uint8_t)1);
-  assertEqual(record.get_type()[0], (uint8_t)'T');
-  assertEqual(record.get_payload_length(), (uint32_t)5);
-  uint8_t *payload = record.get_payload();
+  auto record = NdefRecord::decode(encoded, 9);
+  assertTrue(record->is_message_begin);
+  assertTrue(record->is_message_end);
+  assertEqual(record->get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(record->get_type_length(), (uint8_t)1);
+  assertEqual(record->get_type()[0], (uint8_t)'T');
+  assertEqual(record->get_payload_length(), (uint32_t)5);
+  uint8_t *payload = record->get_payload();
   assertEqual(payload[0], (uint8_t)'H');
   assertEqual(payload[1], (uint8_t)'e');
   assertEqual(payload[2], (uint8_t)'l');
   assertEqual(payload[3], (uint8_t)'l');
   assertEqual(payload[4], (uint8_t)'o');
+  delete record;
 }
 
 const uint8_t LONG_TEXT[] =
@@ -113,39 +113,38 @@ test(record_encode_long_text)
   // Check payload
   for (uint32_t i = 0; i < 386; i++)
     assertEqual(encoded[7 + i], LONG_TEXT[i]);
-  free(encoded);
+  delete[] encoded;
 }
 
 test(record_decode_long_text)
 {
-  uint8_t *encoded = (uint8_t *)malloc(393);
-  // MB=0, ME=0, CF=0, SR=0, IL=0, TNF=0x01
-  encoded[0] = 0b00000001;
-  // Type length is 1
-  encoded[1] = 1;
-  // Payload length is 386
-  encoded[2] = 0;
-  encoded[3] = 0;
-  encoded[4] = 1;
-  encoded[5] = 130;
-  // Type is RTD_TEXT
-  encoded[6] = NdefRecord::RTD_TEXT;
+  auto encoded = new uint8_t[393]{// MB=0, ME=0, CF=0, SR=0, IL=0, TNF=0x01
+                                  NdefRecord::TNF_WELL_KNOWN,
+                                  // Type length is 1
+                                  1,
+                                  // Payload length is 386
+                                  0,
+                                  0,
+                                  1,
+                                  130,
+                                  // Type is RTD_TEXT
+                                  NdefRecord::RTD_TEXT
+  };
   // Copy reference text
   memcpy(encoded + 7, LONG_TEXT, 386);
-  // Create record
-  NdefRecord record;
   // Check decoding
-  assertEqual(record.decode(encoded, 393), NDEF_SUCCESS);
-  free(encoded);
-  assertFalse(record.is_message_begin);
-  assertFalse(record.is_message_end);
-  assertEqual(record.get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
-  assertEqual(record.get_type_length(), (uint8_t)1);
-  assertEqual(record.get_type()[0], (uint8_t)'T');
-  assertEqual(record.get_payload_length(), (uint32_t)386);
-  uint8_t *payload = record.get_payload();
+  auto record = NdefRecord::decode(encoded, 393);
+  delete[] encoded;
+  assertFalse(record->is_message_begin);
+  assertFalse(record->is_message_end);
+  assertEqual(record->get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(record->get_type_length(), (uint8_t)1);
+  assertEqual(record->get_type()[0], (uint8_t)'T');
+  assertEqual(record->get_payload_length(), (uint32_t)386);
+  uint8_t *payload = record->get_payload();
   for (uint32_t i = 0; i < 386; i++)
     assertEqual(payload[i], LONG_TEXT[i]);
+  delete record;
 }
 
 void setup()
