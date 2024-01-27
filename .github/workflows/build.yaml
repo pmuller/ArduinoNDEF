@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: apt install valgrind
+        run: sudo apt install valgrind
       - name: Clone dependencies
         run: |
           cd ..
