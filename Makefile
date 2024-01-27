@@ -6,7 +6,7 @@ clean:
 	make -C tests clean
 
 build:
-	EXTRA_CXXFLAGS=-g make -C tests
+	EXTRA_CXXFLAGS=-g make -C build
 
-test: build
-	make -C tests runtests
+test:
+	make -C tests test

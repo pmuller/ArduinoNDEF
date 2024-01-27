@@ -1,20 +1,20 @@
-tests:
+build:
 	set -e; \
 	for i in *Test/Makefile; do \
-		echo '==== Making:' $$(dirname $$i); \
+		echo '==== Build:' $$(dirname $$i); \
 		$(MAKE) -C $$(dirname $$i); \
 	done
 
-runtests:
+test: build
 	set -e; \
 	for i in *Test/Makefile; do \
-		echo '==== Running:' $$(dirname $$i); \
+		echo '==== Test:' $$(dirname $$i); \
 		$(MAKE) -C $$(dirname $$i) run; \
 	done
 
 clean:
 	set -e; \
 	for i in *Test/Makefile; do \
-		echo '==== Cleaning:' $$(dirname $$i); \
+		echo '==== Clean:' $$(dirname $$i); \
 		$(MAKE) -C $$(dirname $$i) clean; \
 	done
