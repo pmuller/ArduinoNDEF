@@ -17,7 +17,7 @@ NdefMessage::NdefMessage()
 NdefMessage::~NdefMessage()
 {
   for (uint8_t i = 0; i < record_count; i++)
-    free(records[i]);
+    delete records[i];
 
   free(records);
 }
