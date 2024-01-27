@@ -1,7 +1,7 @@
 #line 2 "UriTest.ino"
 
 #include <AUnitVerbose.h>
-#include <MFRC522v2-NDEF.hpp>
+#include <MFRC522v2-NDEF/uri.hpp>
 
 // NFCForum-TS-RTD_URI_1.0.pdf - A.1
 test(build_ndef_uri_payload__simple)

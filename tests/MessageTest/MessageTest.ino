@@ -1,7 +1,7 @@
 #line 2 "MessageTest.ino"
 
 #include <AUnitVerbose.h>
-#include <MFRC522v2-NDEF.hpp>
+#include <MFRC522v2-NDEF.h>
 
 test(message_constructor)
 {
