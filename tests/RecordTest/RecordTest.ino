@@ -136,6 +136,7 @@ test(record_decode_long_text)
   NdefRecord record;
   // Check decoding
   assertEqual(record.decode(encoded, 393), NDEF_SUCCESS);
+  free(encoded);
   assertFalse(record.is_message_begin);
   assertFalse(record.is_message_end);
   assertEqual(record.get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
