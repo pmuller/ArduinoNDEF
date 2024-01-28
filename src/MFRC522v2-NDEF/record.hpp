@@ -206,6 +206,22 @@ class NdefRecord
         const char *mime_type, const uint8_t *payload, uint32_t payload_length
     );
 
+    /**
+     * @brief Create an external type NDEF record
+     *
+     * @param domain The domain
+     * @param external_type The type
+     * @param payload The payload
+     * @param payload_length The payload length
+     * @return NdefRecord* The NDEF record
+     */
+    static NdefRecord *create_external_type_record(
+        const char *domain,
+        const char *external_type,
+        const uint8_t *payload,
+        uint32_t payload_length
+    );
+
   private:
     TNF type_name_format;
     uint8_t *type;

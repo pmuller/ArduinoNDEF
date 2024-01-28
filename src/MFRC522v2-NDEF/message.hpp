@@ -59,14 +59,17 @@ class NdefMessage
     /**
      * @brief Add an external type record to the message
      *
-     * @param type The type
-     * @param type_length The type length
+     * @param domain The domain
+     * @param external_type The external type
      * @param payload The payload
      * @param payload_length The payload length
      * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
      */
     int8_t add_external_type_record(
-        uint8_t *type, uint8_t type_length, uint8_t *payload, uint32_t payload_length
+        const char *domain,
+        const char *external_type,
+        const uint8_t *payload,
+        uint32_t payload_length
     );
 
     /**

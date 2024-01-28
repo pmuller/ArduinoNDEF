@@ -111,15 +111,35 @@ int8_t NdefMessage::add_uri_record(const char *uri)
 }
 
 int8_t NdefMessage::add_external_type_record(
-    uint8_t *type, uint8_t type_length, uint8_t *payload, uint32_t payload_length
+    const char *domain,
+    const char *external_type,
+    const uint8_t *payload,
+    uint32_t payload_length
 )
 {
-  NdefRecord *record = new NdefRecord();
-  record->set_type_name_format(NdefRecord::TNF_EXTERNAL_TYPE);
-  int8_t error;
-  RETURN_IF_ERROR(record->set_type(type, type_length), {});
-  RETURN_IF_ERROR(record->set_payload(payload, payload_length), {});
-  add_record(record);
+  auto record = NdefRecord::create_external_type_record(
+      domain,
+      external_type,
+      payload,
+      payload_length
+  );
+
+  if (record == nullptr)
+  {
+    PRINTLN(
+        F("NdefMessage::add_external_type_record failed to create external type record")
+    );
+    return NDEF_ERROR_EXTERNAL_TYPE_RECORD_CREATION_FAILED;
+  }
+
+  int8_t error = add_record(record);
+  if (error != NDEF_SUCCESS)
+  {
+    delete record;
+    PRINTLN(F("NdefMessage::add_external_type_record failed to add record"));
+    return error;
+  }
+
   return NDEF_SUCCESS;
 }
 

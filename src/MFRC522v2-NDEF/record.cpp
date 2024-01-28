@@ -322,3 +322,71 @@ NdefRecord *NdefRecord::create_mime_media_record(
 
   return record;
 }
+
+#define NDEF_RECORD_EXTERNAL_TYPE_PREFIX "urn:nfc:ext:"
+#define NDEF_RECORD_EXTERNAL_TYPE_PREFIX_LENGTH 12
+
+NdefRecord *NdefRecord::create_external_type_record(
+    const char *domain,
+    const char *external_type,
+    const uint8_t *payload,
+    uint32_t payload_length
+)
+{
+  if (domain == nullptr || external_type == nullptr || payload == nullptr)
+    return nullptr;
+
+  auto domain_length = strlen(domain);
+  auto external_type_length = strlen(external_type);
+  auto type_length = NDEF_RECORD_EXTERNAL_TYPE_PREFIX_LENGTH + domain_length +
+                     1 // ':' separator
+                   + external_type_length;
+
+  if (domain_length == 0 || external_type_length == 0 || type_length > 0xff)
+    return nullptr;
+
+  auto record = new NdefRecord;
+
+  if (record == nullptr)
+    return nullptr;
+
+  // Populate record
+  record->set_type_name_format(NdefRecord::TNF_EXTERNAL_TYPE);
+  record->type = new uint8_t[type_length];
+  record->type_length = type_length;
+  record->payload_length = payload_length;
+
+  // Check allocation
+  if (record->type == nullptr)
+  {
+    delete record;
+    return nullptr;
+  }
+
+  // Build type field
+  auto pointer = record->type;
+  // Add prefix
+  memcpy(
+      pointer,
+      NDEF_RECORD_EXTERNAL_TYPE_PREFIX,
+      NDEF_RECORD_EXTERNAL_TYPE_PREFIX_LENGTH
+  );
+  pointer += NDEF_RECORD_EXTERNAL_TYPE_PREFIX_LENGTH;
+  // Add domain
+  memcpy(pointer, domain, domain_length);
+  pointer += domain_length;
+  // Add ':' separator
+  *pointer = ':';
+  pointer++;
+  // Add external type
+  memcpy(pointer, external_type, external_type_length);
+
+  // Copy payload field
+  if (record->set_payload(payload, payload_length) != NDEF_SUCCESS)
+  {
+    delete record;
+    return nullptr;
+  }
+
+  return record;
+}
