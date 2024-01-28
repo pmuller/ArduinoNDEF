@@ -31,16 +31,12 @@ class NdefMessage
      * @brief Add a MIME Media record to the message
      *
      * @param mime_type The MIME type
-     * @param mime_type_length The MIME type length
      * @param payload The payload
      * @param payload_length The payload length
      * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
      */
     int8_t add_mime_media_record(
-        uint8_t *mime_type,
-        uint8_t mime_type_length,
-        uint8_t *payload,
-        uint32_t payload_length
+        const char *mime_type, const uint8_t *payload, uint32_t payload_length
     );
 
     /**

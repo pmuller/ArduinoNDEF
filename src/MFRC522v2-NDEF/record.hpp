@@ -194,6 +194,18 @@ class NdefRecord
      */
     static NdefRecord *create_uri_record(const char *uri);
 
+    /**
+     * @brief Create a MIME media NDEF record
+     *
+     * @param mime_type The MIME media type
+     * @param payload The payload
+     * @param payload_length The payload length
+     * @return NdefRecord* The NDEF record
+     */
+    static NdefRecord *create_mime_media_record(
+        const char *mime_type, const uint8_t *payload, uint32_t payload_length
+    );
+
   private:
     TNF type_name_format;
     uint8_t *type;

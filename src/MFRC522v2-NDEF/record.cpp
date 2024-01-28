@@ -301,3 +301,24 @@ NdefRecord *NdefRecord::create_uri_record(const char *uri)
 
   return record;
 }
+
+NdefRecord *NdefRecord::create_mime_media_record(
+    const char *mime_type, const uint8_t *payload, uint32_t payload_length
+)
+{
+  auto record = new NdefRecord;
+
+  if (record == nullptr)
+    return nullptr;
+
+  record->set_type_name_format(NdefRecord::TNF_MIME_MEDIA);
+
+  if (record->set_type((uint8_t *)mime_type, strlen(mime_type)) != NDEF_SUCCESS ||
+      record->set_payload(payload, payload_length) != NDEF_SUCCESS)
+  {
+    delete record;
+    return nullptr;
+  }
+
+  return record;
+}

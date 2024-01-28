@@ -56,18 +56,20 @@ int8_t NdefMessage::add_record(NdefRecord *record)
 }
 
 int8_t NdefMessage::add_mime_media_record(
-    uint8_t *mime_type,
-    uint8_t mime_type_length,
-    uint8_t *payload,
-    uint32_t payload_length
+    const char *mime_type, const uint8_t *payload, uint32_t payload_length
 )
 {
-  NdefRecord *record = new NdefRecord();
-  record->set_type_name_format(NdefRecord::TNF_MIME_MEDIA);
-  int8_t error;
-  RETURN_IF_ERROR(record->set_type(mime_type, mime_type_length), {});
-  RETURN_IF_ERROR(record->set_payload(payload, payload_length), {});
+  auto record =
+      NdefRecord::create_mime_media_record(mime_type, payload, payload_length);
+
+  if (record == nullptr)
+  {
+    PRINTLN(F("NdefMessage::add_mime_media_record failed to create MIME media record"));
+    return NDEF_ERROR_MIME_MEDIA_RECORD_CREATION_FAILED;
+  }
+
   add_record(record);
+
   return NDEF_SUCCESS;
 }
 
