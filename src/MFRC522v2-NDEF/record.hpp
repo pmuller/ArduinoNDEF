@@ -186,6 +186,14 @@ class NdefRecord
      */
     static NdefRecord *create_text_record(const char *text, const char *language_code);
 
+    /**
+     * @brief Create a URI NDEF record
+     *
+     * @param uri The URI
+     * @return NdefRecord* The NDEF record
+     */
+    static NdefRecord *create_uri_record(const char *uri);
+
   private:
     TNF type_name_format;
     uint8_t *type;

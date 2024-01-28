@@ -2,6 +2,7 @@
 
 #include "constants.hpp"
 #include "macros.hpp"
+#include "uri.hpp"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -273,6 +274,26 @@ NdefRecord *NdefRecord::create_text_record(const char *text, const char *languag
 
   if (record->set_type(NdefRecord::RTD_TEXT) != NDEF_SUCCESS ||
       record->set_payload(payload, payload_length) != NDEF_SUCCESS)
+  {
+    delete record;
+    return nullptr;
+  }
+
+  return record;
+}
+
+NdefRecord *NdefRecord::create_uri_record(const char *uri)
+{
+  auto record = new NdefRecord;
+
+  if (record == nullptr)
+    return nullptr;
+
+  record->set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
+  NdefUriPayload payload(uri);
+
+  if (!payload.is_valid() || record->set_type(NdefRecord::RTD_URI) != NDEF_SUCCESS ||
+      record->set_payload(payload.get_data(), payload.get_length()) != NDEF_SUCCESS)
   {
     delete record;
     return nullptr;
