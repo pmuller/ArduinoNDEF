@@ -6,7 +6,7 @@
 test(record_constructor)
 {
   NdefRecord record;
-  assertEqual(record.get_type_name_format(), NdefRecord::TNF_EMPTY);
+  assertEqual(record.type_name_format, NdefRecord::TNF_EMPTY);
   assertFalse(record.is_message_begin);
   assertFalse(record.is_message_end);
   assertEqual(record.get_type(), NULL);
@@ -33,7 +33,7 @@ test(record_encode_short)
   NdefRecord record;
   record.is_message_begin = true;
   record.is_message_end = true;
-  record.set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
+  record.type_name_format = NdefRecord::TNF_WELL_KNOWN;
   assertEqual(record.set_type(NdefRecord::RTD_TEXT), NDEF_SUCCESS);
   assertEqual(record.set_payload((uint8_t *)"Hello", 5), NDEF_SUCCESS);
   assertEqual(record.get_encoded_size(), (uint32_t)9);
@@ -71,7 +71,7 @@ test(record_decode_short)
   auto record = NdefRecord::decode(encoded, 9);
   assertTrue(record->is_message_begin);
   assertTrue(record->is_message_end);
-  assertEqual(record->get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(record->type_name_format, NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record->get_type_length(), (uint8_t)1);
   assertEqual(record->get_type()[0], (uint8_t)'T');
   assertEqual(record->get_payload_length(), (uint32_t)5);
@@ -94,7 +94,7 @@ const uint8_t LONG_TEXT[] =
 test(record_encode_long_text)
 {
   NdefRecord record;
-  record.set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
+  record.type_name_format = NdefRecord::TNF_WELL_KNOWN;
   assertEqual(record.set_type(NdefRecord::RTD_TEXT), NDEF_SUCCESS);
   assertEqual(record.set_payload((uint8_t *)LONG_TEXT, 386), NDEF_SUCCESS);
   assertEqual(record.get_encoded_size(), (uint32_t)393);
@@ -137,7 +137,7 @@ test(record_decode_long_text)
   delete[] encoded;
   assertFalse(record->is_message_begin);
   assertFalse(record->is_message_end);
-  assertEqual(record->get_type_name_format(), NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(record->type_name_format, NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record->get_type_length(), (uint8_t)1);
   assertEqual(record->get_type()[0], (uint8_t)'T');
   assertEqual(record->get_payload_length(), (uint32_t)386);

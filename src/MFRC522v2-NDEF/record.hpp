@@ -21,7 +21,7 @@ class NdefRecord
 {
   public:
     /**
-     * @brief Type Name Format
+     * @brief Type Name Format (TNF) Definition
      */
     enum TNF
     {
@@ -48,10 +48,16 @@ class NdefRecord
      * @brief Message Begin flag (MB)
      */
     bool is_message_begin;
+
     /**
      * @brief Message End flag (ME)
      */
     bool is_message_end;
+
+    /**
+     * @brief Type Name Format
+     */
+    TNF type_name_format;
 
     /**
      * @brief Create an empty NDEF record
@@ -62,20 +68,6 @@ class NdefRecord
      * @brief Destroy the NDEF record
      */
     ~NdefRecord();
-
-    /**
-     * @brief Get the record Type Name Format
-     *
-     * @return TNF The Type Name Format
-     */
-    TNF get_type_name_format();
-
-    /**
-     * @brief Set the record Type Name Format
-     *
-     * @param type_name_format The Type Name Format
-     */
-    void set_type_name_format(TNF type_name_format);
 
     /**
      * @brief Get the record type field
@@ -223,7 +215,6 @@ class NdefRecord
     );
 
   private:
-    TNF type_name_format;
     uint8_t *type;
     uint8_t type_length;
     uint8_t *id;

@@ -28,13 +28,6 @@ NdefRecord::~NdefRecord()
   delete[] payload;
 }
 
-NdefRecord::TNF NdefRecord::get_type_name_format() { return type_name_format; }
-
-void NdefRecord::set_type_name_format(TNF type_name_format)
-{
-  this->type_name_format = type_name_format;
-}
-
 #define REALLOC_FIELD_OR_FAIL(name, size)                                              \
   auto pointer = new uint8_t[size];                                                    \
   if (pointer == nullptr)                                                              \
@@ -270,7 +263,7 @@ NdefRecord *NdefRecord::create_text_record(const char *text, const char *languag
 
   // Create record
   auto record = new NdefRecord();
-  record->set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
+  record->type_name_format = NdefRecord::TNF_WELL_KNOWN;
 
   if (record->set_type(NdefRecord::RTD_TEXT) != NDEF_SUCCESS ||
       record->set_payload(payload, payload_length) != NDEF_SUCCESS)
@@ -289,7 +282,7 @@ NdefRecord *NdefRecord::create_uri_record(const char *uri)
   if (record == nullptr)
     return nullptr;
 
-  record->set_type_name_format(NdefRecord::TNF_WELL_KNOWN);
+  record->type_name_format = NdefRecord::TNF_WELL_KNOWN;
   NdefUriPayload payload(uri);
 
   if (!payload.is_valid() || record->set_type(NdefRecord::RTD_URI) != NDEF_SUCCESS ||
@@ -311,7 +304,7 @@ NdefRecord *NdefRecord::create_mime_media_record(
   if (record == nullptr)
     return nullptr;
 
-  record->set_type_name_format(NdefRecord::TNF_MIME_MEDIA);
+  record->type_name_format = NdefRecord::TNF_MIME_MEDIA;
 
   if (record->set_type((uint8_t *)mime_type, strlen(mime_type)) != NDEF_SUCCESS ||
       record->set_payload(payload, payload_length) != NDEF_SUCCESS)
@@ -351,7 +344,7 @@ NdefRecord *NdefRecord::create_external_type_record(
     return nullptr;
 
   // Populate record
-  record->set_type_name_format(NdefRecord::TNF_EXTERNAL_TYPE);
+  record->type_name_format = NdefRecord::TNF_EXTERNAL_TYPE;
   record->type = new uint8_t[type_length];
   record->type_length = type_length;
   record->payload_length = payload_length;

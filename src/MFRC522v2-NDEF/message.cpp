@@ -146,7 +146,7 @@ int8_t NdefMessage::add_external_type_record(
 int8_t NdefMessage::add_empty_record()
 {
   NdefRecord *record = new NdefRecord();
-  record->set_type_name_format(NdefRecord::TNF_EMPTY);
+  record->type_name_format = NdefRecord::TNF_EMPTY;
   add_record(record);
   return NDEF_SUCCESS;
 }
