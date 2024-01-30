@@ -23,6 +23,12 @@ NdefMessage::~NdefMessage()
 
 int8_t NdefMessage::add_record(NdefRecord *record)
 {
+  if (record == nullptr)
+  {
+    PRINTLN(F("NdefMessage::add_record failed"));
+    return NDEF_ERROR_RECORD_IS_NULL;
+  }
+
   NdefRecord **records = new NdefRecord *[record_count + 1];
 
   if (records == nullptr)
