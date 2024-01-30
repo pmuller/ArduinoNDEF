@@ -1,4 +1,4 @@
-EXTRA_CXXFLAGS := -g
+EXTRA_CXXFLAGS := -g -fno-permissive
 ARDUINO_LIBS := AUnit MFRC522v2-NDEF
 include ../../../EpoxyDuino/EpoxyDuino.mk
 
