@@ -2,7 +2,6 @@
 
 #include "constants.hpp"
 #include "macros.hpp"
-#include "uri.hpp"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -191,23 +190,6 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
       is_message_begin,
       is_message_end,
       *id
-  );
-}
-
-NdefRecord *NdefRecord::create_uri_record(const char *uri)
-{
-  NdefUriPayload payload(uri);
-  if (!payload.is_valid())
-    return nullptr;
-
-  auto payload_field = new NdefRecordPayload(payload.data(), payload.length());
-  if (payload_field == nullptr)
-    return nullptr;
-
-  return new NdefRecord(
-      NdefRecord::TNF_WELL_KNOWN,
-      *(new NdefRecordType(NdefRecordType::RTD_URI)),
-      *payload_field
   );
 }
 

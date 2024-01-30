@@ -40,14 +40,6 @@ class NdefMessage
     );
 
     /**
-     * @brief Add a URI record to the message
-     *
-     * @param uri The URI
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t add_uri_record(const char *uri);
-
-    /**
      * @brief Add an external type record to the message
      *
      * @param domain The domain

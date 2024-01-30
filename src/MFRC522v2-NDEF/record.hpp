@@ -111,14 +111,6 @@ class NdefRecord
     static NdefRecord *decode(const uint8_t &data, uint32_t data_length);
 
     /**
-     * @brief Create a URI NDEF record
-     *
-     * @param uri The URI
-     * @return NdefRecord* The NDEF record
-     */
-    static NdefRecord *create_uri_record(const char *uri);
-
-    /**
      * @brief Create a MIME media NDEF record
      *
      * @param mime_type The MIME media type

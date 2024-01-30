@@ -170,7 +170,7 @@ test(create_text_record)
 
 test(create_uri_record)
 {
-  auto record = NdefRecord::create_uri_record("https://hackaday.com");
+  auto record = NdefUriRecord::create("https://hackaday.com");
   assertEqual(record->type_name_format, NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record->type().length(), (uint8_t)1);
   assertEqual(record->type().data()[0], (uint8_t)NdefRecordType::RTD_URI);

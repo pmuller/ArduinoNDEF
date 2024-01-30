@@ -80,28 +80,6 @@ int8_t NdefMessage::add_mime_media_record(
   return NDEF_SUCCESS;
 }
 
-int8_t NdefMessage::add_uri_record(const char *uri)
-{
-  auto record = NdefRecord::create_uri_record(uri);
-
-  if (record == nullptr)
-  {
-    PRINTLN(F("NdefMessage::add_uri_record failed to create URI record"));
-    return NDEF_ERROR_URI_RECORD_CREATION_FAILED;
-  }
-
-  int8_t error = add_record(record);
-
-  if (error != NDEF_SUCCESS)
-  {
-    delete record;
-    PRINTLN(F("NdefMessage::add_uri_record failed to add record"));
-    return error;
-  }
-
-  return NDEF_SUCCESS;
-}
-
 int8_t NdefMessage::add_external_type_record(
     const char *domain,
     const char *external_type,

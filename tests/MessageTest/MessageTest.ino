@@ -91,7 +91,10 @@ test(message_add_mime_media_record)
 test(message_add_uri_record)
 {
   NdefMessage message;
-  assertEqual(message.add_uri_record("https://www.google.com"), NDEF_SUCCESS);
+  assertEqual(
+      message.add_record(NdefUriRecord::create("https://www.google.com")),
+      NDEF_SUCCESS
+  );
   assertEqual(message.get_record_count(), (uint8_t)1);
   assertEqual(message.get_encoded_size(), (uint32_t)15);
   uint8_t *encoded = message.encode();
