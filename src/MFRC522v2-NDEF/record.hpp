@@ -99,7 +99,7 @@ class NdefRecord
      *
      * @return uint8_t* Encoded NDEF record
      */
-    uint8_t *encode();
+    uint8_t *encode() const;
 
     /**
      * @brief Decode an encoded NDEF record

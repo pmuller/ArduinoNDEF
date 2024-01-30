@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-uint8_t *NdefRecord::encode()
+uint8_t *NdefRecord::encode() const
 {
   auto result = new uint8_t[get_encoded_size()];
   auto result_ptr = result;
