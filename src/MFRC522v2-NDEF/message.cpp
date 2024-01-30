@@ -213,7 +213,10 @@ int8_t NdefMessage::decode(uint8_t *data, uint32_t data_length)
 
     int8_t error = add_record(record);
     if (error != NDEF_SUCCESS)
+    {
+      delete record;
       return error;
+    }
 
     data_ptr += record->get_encoded_size();
   }
