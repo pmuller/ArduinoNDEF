@@ -4,6 +4,16 @@
 
 #include <string.h>
 
+/**
+ * @brief NDEF URI identifier codes
+ * @ref NFCForum-TS-RTD_URI_1.0.pdf - Table 3. Abbreviation Table
+ */
+#define NDEF_URI_CODE_IDENTIFIER_COUNT 36
+struct NdefUriPrefix
+{
+    uint8_t code;
+    const char *prefix;
+};
 static const NdefUriPrefix
     NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[NDEF_URI_CODE_IDENTIFIER_COUNT] = {
         {0x00,                           ""},
@@ -67,26 +77,28 @@ NdefUriPayload::NdefUriPayload(const char *uri)
     }
   }
 
-  length = uri_length + 1; // Add 1 for the identifier code byte
+  // XXX: we truncate long URLs, not great but it's better than nothing
+  uint8_t length = min(uri_length + 1, 0xff); // Add 1 for the identifier code byte
   uint8_t *data = new uint8_t[length];
 
   if (data == nullptr)
-  {
-    PRINTLN(F("NdefUriPayload failed to allocate data memory"));
     return;
-  }
 
   data[0] = code;
   memcpy(data + 1, &uri[uri_offset], uri_length);
-  this->data = data;
+
+  _data = data;
+  _length = length;
 }
 
 bool NdefUriPayload::is_valid() const
 {
-  if (data == nullptr || length < 2)
+  // Check if the data is valid
+  if (_data == nullptr || _length < 2)
     return false;
 
-  uint8_t code = data[0];
+  // Check if the identifier code is valid
+  uint8_t code = _data[0];
 
   for (uint8_t i = 0; i < NDEF_URI_CODE_IDENTIFIER_COUNT; i++)
     if (code == NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].code)
@@ -95,15 +107,15 @@ bool NdefUriPayload::is_valid() const
   return false;
 }
 
-uint8_t NdefUriPayload::get_code() const
+uint8_t NdefUriPayload::code() const
 {
   if (!is_valid())
     return 0;
 
-  return data[0];
+  return _data[0];
 }
 
-const char *NdefUriPayload::get_uri() const
+const char *NdefUriPayload::uri() const
 {
   if (!is_valid())
     return nullptr;
@@ -112,33 +124,28 @@ const char *NdefUriPayload::get_uri() const
   uint8_t prefix_length = 0;
   char *uri = nullptr;
   size_t uri_length = 0;
-  uint8_t code = get_code();
+  uint8_t code_ = code();
 
   for (uint8_t i = 0; i < NDEF_URI_CODE_IDENTIFIER_COUNT; i++)
-  {
-    if (code == NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].code)
+    if (code_ == NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].code)
     {
       prefix = NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].prefix;
       prefix_length = strlen(prefix);
       break;
     }
-  }
 
   // We know that prefix *IS* populated because we called is_valid() earlier
 
   // Implicitely includes null terminator byte because we do not subtract the identifier
   // code byte
-  uri_length = prefix_length + length;
+  uri_length = prefix_length + _length;
   uri = new char[uri_length];
 
   if (uri == nullptr)
-  {
-    PRINTLN(F("build_uri_from_ndef_uri_payload failed to allocate uri memory"));
     return nullptr;
-  }
 
   memcpy(uri, prefix, prefix_length);
-  memcpy(uri + prefix_length, data + 1, length - 1);
+  memcpy(uri + prefix_length, _data + 1, _length - 1);
   uri[uri_length - 1] = '\0';
 
   return uri;

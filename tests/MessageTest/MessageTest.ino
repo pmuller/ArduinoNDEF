@@ -102,7 +102,7 @@ test(message_add_uri_record)
   // Payload length is 14
   assertEqual(encoded[2], (uint8_t)11);
   // Type is RTD_URI
-  assertEqual(encoded[3], (uint8_t)NdefRecord::RTD_URI);
+  assertEqual(encoded[3], (uint8_t)NdefRecordType::RTD_URI);
   // Payload is "\2google.com"
   assertEqual(encoded[4], (uint8_t)0x02);
   assertEqual(encoded[5], (uint8_t)'g');

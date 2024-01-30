@@ -113,7 +113,7 @@ int8_t NdefMessage::add_uri_record(const char *uri)
 int8_t NdefMessage::add_external_type_record(
     const char *domain,
     const char *external_type,
-    const uint8_t *payload,
+    uint8_t *payload,
     uint32_t payload_length
 )
 {
@@ -143,13 +143,7 @@ int8_t NdefMessage::add_external_type_record(
   return NDEF_SUCCESS;
 }
 
-int8_t NdefMessage::add_empty_record()
-{
-  NdefRecord *record = new NdefRecord();
-  record->type_name_format = NdefRecord::TNF_EMPTY;
-  add_record(record);
-  return NDEF_SUCCESS;
-}
+int8_t NdefMessage::add_empty_record() { return add_record(new NdefRecord()); }
 
 uint32_t NdefMessage::get_encoded_size()
 {
