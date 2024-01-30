@@ -68,7 +68,14 @@ int8_t NdefMessage::add_mime_media_record(
     return NDEF_ERROR_MIME_MEDIA_RECORD_CREATION_FAILED;
   }
 
-  add_record(record);
+  int8_t error = add_record(record);
+
+  if (error != NDEF_SUCCESS)
+  {
+    delete record;
+    PRINTLN(F("NdefMessage::add_mime_media_record failed to add record"));
+    return error;
+  }
 
   return NDEF_SUCCESS;
 }
@@ -105,7 +112,14 @@ int8_t NdefMessage::add_uri_record(const char *uri)
     return NDEF_ERROR_URI_RECORD_CREATION_FAILED;
   }
 
-  add_record(record);
+  int8_t error = add_record(record);
+
+  if (error != NDEF_SUCCESS)
+  {
+    delete record;
+    PRINTLN(F("NdefMessage::add_uri_record failed to add record"));
+    return error;
+  }
 
   return NDEF_SUCCESS;
 }
@@ -133,6 +147,7 @@ int8_t NdefMessage::add_external_type_record(
   }
 
   int8_t error = add_record(record);
+
   if (error != NDEF_SUCCESS)
   {
     delete record;
