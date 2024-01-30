@@ -108,7 +108,7 @@ class NdefRecord
      * @param data_length The data length
      * @return NdefRecord* The decoded NDEF record
      */
-    static NdefRecord *decode(const uint8_t *data, uint32_t data_length);
+    static NdefRecord *decode(const uint8_t &data, uint32_t data_length);
 
     /**
      * @brief Create a text NDEF record

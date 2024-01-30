@@ -193,15 +193,15 @@ uint8_t *NdefMessage::encode()
   return result;
 }
 
-int8_t NdefMessage::decode(const uint8_t *data, uint32_t data_length)
+int8_t NdefMessage::decode(const uint8_t &data, uint32_t data_length)
 {
-  const uint8_t *data_ptr = data;
-  const uint8_t *data_end = data + data_length;
+  const uint8_t *data_ptr = &data;
+  const uint8_t *data_end = &data + data_length;
   bool found_last_message = false;
 
   while (data_ptr < data_end && !found_last_message)
   {
-    auto record = NdefRecord::decode(data_ptr, data_end - data_ptr);
+    auto record = NdefRecord::decode(*data_ptr, data_end - data_ptr);
 
     if (record == nullptr)
     {
