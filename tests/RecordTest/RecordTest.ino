@@ -151,7 +151,7 @@ test(record_decode_long_text)
 
 test(create_text_record)
 {
-  auto record = NdefRecord::create_text_record("Hello", "en");
+  auto record = NdefTextRecord::create("Hello", "en");
   assertEqual(record->type_name_format, NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record->type().length(), (uint8_t)1);
   assertEqual(record->type().data()[0], (uint8_t)NdefRecordType::RTD_TEXT);

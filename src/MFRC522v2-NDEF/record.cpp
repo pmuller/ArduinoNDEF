@@ -194,37 +194,6 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
   );
 }
 
-NdefRecord *NdefRecord::create_text_record(const char *text, const char *language_code)
-{
-  // Prepare header
-  uint32_t language_code_length = strlen(language_code);
-  uint32_t header_length = 1 + language_code_length;
-  uint8_t header[header_length];
-  header[0] = language_code_length;
-  memcpy(header + 1, language_code, language_code_length);
-
-  // Prepare payload
-  uint32_t text_length = strlen(text);
-  uint32_t payload_length = header_length + text_length;
-
-  auto payload = new uint8_t[payload_length];
-  if (payload == nullptr)
-    return nullptr;
-
-  memcpy(payload, header, header_length);
-  memcpy(payload + header_length, text, text_length);
-
-  return new NdefRecord(
-      TNF_WELL_KNOWN,
-      *(new NdefRecordType(NdefRecordType::RTD_TEXT)),
-      *(new NdefRecordPayload(
-          payload,
-          payload_length,
-          NdefRecordPayload::OwnershipUnique
-      ))
-  );
-}
-
 NdefRecord *NdefRecord::create_uri_record(const char *uri)
 {
   NdefUriPayload payload(uri);

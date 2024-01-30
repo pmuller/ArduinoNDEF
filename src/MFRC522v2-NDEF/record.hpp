@@ -111,15 +111,6 @@ class NdefRecord
     static NdefRecord *decode(const uint8_t &data, uint32_t data_length);
 
     /**
-     * @brief Create a text NDEF record
-     *
-     * @param text The text
-     * @param language_code The language code
-     * @return NdefRecord* The NDEF record
-     */
-    static NdefRecord *create_text_record(const char *text, const char *language_code);
-
-    /**
      * @brief Create a URI NDEF record
      *
      * @param uri The URI

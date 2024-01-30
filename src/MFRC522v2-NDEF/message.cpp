@@ -80,28 +80,6 @@ int8_t NdefMessage::add_mime_media_record(
   return NDEF_SUCCESS;
 }
 
-int8_t NdefMessage::add_text_record(char *text, const char *language_code)
-{
-  auto record = NdefRecord::create_text_record(text, language_code);
-
-  if (record == nullptr)
-  {
-    PRINTLN(F("NdefMessage::add_text_record failed to create text record"));
-    return NDEF_ERROR_TEXT_RECORD_CREATION_FAILED;
-  }
-
-  int8_t error = add_record(record);
-
-  if (error != NDEF_SUCCESS)
-  {
-    delete record;
-    PRINTLN(F("NdefMessage::add_text_record failed to add record"));
-    return error;
-  }
-
-  return NDEF_SUCCESS;
-}
-
 int8_t NdefMessage::add_uri_record(const char *uri)
 {
   auto record = NdefRecord::create_uri_record(uri);

@@ -40,15 +40,6 @@ class NdefMessage
     );
 
     /**
-     * @brief Add a Text record to the message
-     *
-     * @param text The text
-     * @param language_code The language code
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t add_text_record(char *text, const char *language_code = "en");
-
-    /**
      * @brief Add a URI record to the message
      *
      * @param uri The URI
