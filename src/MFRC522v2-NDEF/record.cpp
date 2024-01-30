@@ -193,17 +193,6 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
   );
 }
 
-NdefRecord *NdefRecord::create_mime_media_record(
-    const char *mime_type, const uint8_t *payload, uint32_t payload_length
-)
-{
-  return new NdefRecord(
-      NdefRecord::TNF_MIME_MEDIA,
-      *(new NdefRecordType(mime_type)),
-      *(new NdefRecordPayload(payload, payload_length))
-  );
-}
-
 #define NDEF_RECORD_EXTERNAL_TYPE_PREFIX "urn:nfc:ext:"
 #define NDEF_RECORD_EXTERNAL_TYPE_PREFIX_LENGTH 12
 

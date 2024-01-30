@@ -28,18 +28,6 @@ class NdefMessage
     int8_t add_record(NdefRecord *record);
 
     /**
-     * @brief Add a MIME Media record to the message
-     *
-     * @param mime_type The MIME type
-     * @param payload The payload
-     * @param payload_length The payload length
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t add_mime_media_record(
-        const char *mime_type, const uint8_t *payload, uint32_t payload_length
-    );
-
-    /**
      * @brief Add an external type record to the message
      *
      * @param domain The domain

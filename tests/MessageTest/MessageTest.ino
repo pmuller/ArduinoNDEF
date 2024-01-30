@@ -56,7 +56,9 @@ test(message_add_mime_media_record)
 {
   NdefMessage message;
   assertEqual(
-      message.add_mime_media_record("text/plain", (uint8_t *)"Hello", 5),
+      message.add_record(
+          NdefMimeMediaRecord::create("text/plain", (uint8_t *)"Hello", 5)
+      ),
       NDEF_SUCCESS
   );
   assertEqual(message.get_record_count(), (uint8_t)1);

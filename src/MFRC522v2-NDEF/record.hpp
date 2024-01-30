@@ -111,18 +111,6 @@ class NdefRecord
     static NdefRecord *decode(const uint8_t &data, uint32_t data_length);
 
     /**
-     * @brief Create a MIME media NDEF record
-     *
-     * @param mime_type The MIME media type
-     * @param payload The payload
-     * @param payload_length The payload length
-     * @return NdefRecord* The NDEF record
-     */
-    static NdefRecord *create_mime_media_record(
-        const char *mime_type, const uint8_t *payload, uint32_t payload_length
-    );
-
-    /**
      * @brief Create an external type NDEF record
      *
      * @param domain The domain

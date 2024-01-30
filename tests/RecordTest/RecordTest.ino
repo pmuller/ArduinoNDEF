@@ -194,8 +194,7 @@ test(create_uri_record)
 
 test(create_mime_media_record)
 {
-  auto record =
-      NdefRecord::create_mime_media_record("text/plain", (uint8_t *)"Hello", 5);
+  auto record = NdefMimeMediaRecord::create("text/plain", "Hello");
   assertEqual(record->type_name_format, NdefRecord::TNF_MIME_MEDIA);
   assertEqual(record->type().length(), (uint8_t)10);
   assertEqual(record->type().data()[0], (uint8_t)'t');
