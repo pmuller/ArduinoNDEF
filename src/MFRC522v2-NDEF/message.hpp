@@ -28,13 +28,6 @@ class NdefMessage
     int8_t add_record(NdefRecord *record);
 
     /**
-     * @brief Add an empty record to the message
-     *
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t add_empty_record();
-
-    /**
      * @brief Get the size of the encoded NDEF message
      *
      * @return uint8_t Encoded size

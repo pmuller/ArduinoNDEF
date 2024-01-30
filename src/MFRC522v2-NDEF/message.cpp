@@ -61,8 +61,6 @@ int8_t NdefMessage::add_record(NdefRecord *record)
   return NDEF_SUCCESS;
 }
 
-int8_t NdefMessage::add_empty_record() { return add_record(new NdefRecord()); }
-
 uint32_t NdefMessage::get_encoded_size()
 {
   uint32_t result = 0;

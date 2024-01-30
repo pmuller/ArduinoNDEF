@@ -13,8 +13,7 @@ test(message_constructor)
 test(message_add_one_record)
 {
   NdefMessage message;
-  NdefRecord *record = new NdefRecord();
-  assertEqual(message.add_record(record), NDEF_SUCCESS);
+  assertEqual(message.add_record(NdefEmptyRecord::create()), NDEF_SUCCESS);
   assertEqual(message.get_record_count(), (uint8_t)1);
   assertEqual(message.get_encoded_size(), (uint32_t)3);
   uint8_t *encoded = message.encode();
@@ -28,12 +27,9 @@ test(message_add_one_record)
 test(message_add_three_records)
 {
   NdefMessage message;
-  NdefRecord *record1 = new NdefRecord();
-  NdefRecord *record2 = new NdefRecord();
-  NdefRecord *record3 = new NdefRecord();
-  assertEqual(message.add_record(record1), NDEF_SUCCESS);
-  assertEqual(message.add_record(record2), NDEF_SUCCESS);
-  assertEqual(message.add_record(record3), NDEF_SUCCESS);
+  assertEqual(message.add_record(NdefEmptyRecord::create()), NDEF_SUCCESS);
+  assertEqual(message.add_record(NdefEmptyRecord::create()), NDEF_SUCCESS);
+  assertEqual(message.add_record(NdefEmptyRecord::create()), NDEF_SUCCESS);
   assertEqual(message.get_record_count(), (uint8_t)3);
   assertEqual(message.get_encoded_size(), (uint32_t)9);
   uint8_t *encoded = message.encode();

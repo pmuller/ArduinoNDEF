@@ -66,12 +66,12 @@ class NdefRecord
      * @param id The ID
      */
     NdefRecord(
-        TNF type_name_format = TNF_EMPTY,
-        const NdefRecordType &type = *(new NdefRecordType()),
-        const NdefRecordPayload &payload = *(new NdefRecordPayload()),
-        bool is_message_begin = false,
-        bool is_message_end = false,
-        const NdefRecordId &id = *(new NdefRecordId())
+        TNF type_name_format,
+        const NdefRecordType &type,
+        const NdefRecordPayload &payload,
+        bool is_message_begin,
+        bool is_message_end,
+        const NdefRecordId &id
     ) :
         is_message_begin(is_message_begin),
         is_message_end(is_message_end), type_name_format(type_name_format), _type(type),

@@ -3,22 +3,17 @@
 #include <AUnitVerbose.h>
 #include <MFRC522v2-NDEF.h>
 
-test(record_constructor)
+test(empty_record)
 {
-  NdefRecord record;
-  assertEqual(record.type_name_format, NdefRecord::TNF_EMPTY);
-  assertFalse(record.is_message_begin);
-  assertFalse(record.is_message_end);
-  assertEqual(record.type().data(), NULL);
-  assertEqual(record.id().data(), NULL);
-  assertEqual(record.payload().data(), NULL);
-  assertEqual(record.get_encoded_size(), (uint32_t)3);
-}
-
-test(record_encode_empty)
-{
-  NdefRecord record;
-  uint8_t *encoded = record.encode();
+  auto record = NdefEmptyRecord::create();
+  assertEqual(record->type_name_format, NdefRecord::TNF_EMPTY);
+  assertFalse(record->is_message_begin);
+  assertFalse(record->is_message_end);
+  assertEqual(record->type().data(), NULL);
+  assertEqual(record->id().data(), NULL);
+  assertEqual(record->payload().data(), NULL);
+  assertEqual(record->get_encoded_size(), (uint32_t)3);
+  uint8_t *encoded = record->encode();
   // Only the SR flag is 1
   assertEqual(encoded[0], (uint8_t)0b00010000);
   // Type length is 0
@@ -26,6 +21,7 @@ test(record_encode_empty)
   // Payload length is 0
   assertEqual(encoded[2], (uint8_t)0);
   delete[] encoded;
+  delete record;
 }
 
 test(record_encode_short)
@@ -35,7 +31,8 @@ test(record_encode_short)
       *(new NdefRecordType(NdefRecordType::RTD_TEXT)),
       *(new NdefRecordPayload("Hello")),
       true,
-      true
+      true,
+      *(new NdefRecordId())
   );
   assertEqual(record.get_encoded_size(), (uint32_t)9);
   uint8_t *encoded = record.encode();
@@ -97,7 +94,10 @@ test(record_encode_long_text)
   NdefRecord record(
       NdefRecord::TNF_WELL_KNOWN,
       *(new NdefRecordType(NdefRecordType::RTD_TEXT)),
-      *(new NdefRecordPayload(LONG_TEXT))
+      *(new NdefRecordPayload(LONG_TEXT)),
+      false,
+      false,
+      *(new NdefRecordId())
   );
   assertEqual(record.get_encoded_size(), (uint32_t)393);
   uint8_t *encoded = record.encode();
