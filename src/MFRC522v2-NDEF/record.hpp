@@ -110,22 +110,6 @@ class NdefRecord
      */
     static NdefRecord *decode(const uint8_t &data, uint32_t data_length);
 
-    /**
-     * @brief Create an external type NDEF record
-     *
-     * @param domain The domain
-     * @param external_type The type
-     * @param payload The payload
-     * @param payload_length The payload length
-     * @return NdefRecord* The NDEF record
-     */
-    static NdefRecord *create_external_type_record(
-        const char *domain,
-        const char *external_type,
-        uint8_t *payload,
-        uint32_t payload_length
-    );
-
     const NdefRecordType &type() const { return _type; };
     const NdefRecordId &id() const { return _id; };
     const NdefRecordPayload &payload() const { return _payload; };

@@ -61,40 +61,6 @@ int8_t NdefMessage::add_record(NdefRecord *record)
   return NDEF_SUCCESS;
 }
 
-int8_t NdefMessage::add_external_type_record(
-    const char *domain,
-    const char *external_type,
-    uint8_t *payload,
-    uint32_t payload_length
-)
-{
-  auto record = NdefRecord::create_external_type_record(
-      domain,
-      external_type,
-      payload,
-      payload_length
-  );
-
-  if (record == nullptr)
-  {
-    PRINTLN(
-        F("NdefMessage::add_external_type_record failed to create external type record")
-    );
-    return NDEF_ERROR_EXTERNAL_TYPE_RECORD_CREATION_FAILED;
-  }
-
-  int8_t error = add_record(record);
-
-  if (error != NDEF_SUCCESS)
-  {
-    delete record;
-    PRINTLN(F("NdefMessage::add_external_type_record failed to add record"));
-    return error;
-  }
-
-  return NDEF_SUCCESS;
-}
-
 int8_t NdefMessage::add_empty_record() { return add_record(new NdefRecord()); }
 
 uint32_t NdefMessage::get_encoded_size()

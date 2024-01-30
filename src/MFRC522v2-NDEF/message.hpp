@@ -28,22 +28,6 @@ class NdefMessage
     int8_t add_record(NdefRecord *record);
 
     /**
-     * @brief Add an external type record to the message
-     *
-     * @param domain The domain
-     * @param external_type The external type
-     * @param payload The payload
-     * @param payload_length The payload length
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t add_external_type_record(
-        const char *domain,
-        const char *external_type,
-        uint8_t *payload,
-        uint32_t payload_length
-    );
-
-    /**
      * @brief Add an empty record to the message
      *
      * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED

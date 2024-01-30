@@ -219,12 +219,7 @@ test(create_mime_media_record)
 
 test(create_external_type_record)
 {
-  auto record = NdefRecord::create_external_type_record(
-      "com.example",
-      "custom-type",
-      (uint8_t *)"Hello",
-      5
-  );
+  auto record = NdefExternalTypeRecord::create("com.example", "custom-type", "Hello");
   assertEqual(record->type_name_format, NdefRecord::TNF_EXTERNAL_TYPE);
   assertEqual(record->type().length(), (uint8_t)35);
   assertEqual(record->type().data()[0], (uint8_t)'u');

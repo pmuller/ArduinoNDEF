@@ -127,12 +127,12 @@ test(message_add_external_type_record)
 {
   NdefMessage message;
   assertEqual(
-      message.add_external_type_record(
+      message.add_record(NdefExternalTypeRecord::create(
           "com.example",
           "externalType",
           (uint8_t *)"Hello",
           5
-      ),
+      )),
       NDEF_SUCCESS
   );
   assertEqual(message.get_record_count(), (uint8_t)1);
