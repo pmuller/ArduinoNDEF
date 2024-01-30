@@ -68,7 +68,7 @@ class NdefMessage
     int8_t add_external_type_record(
         const char *domain,
         const char *external_type,
-        const uint8_t *payload,
+        uint8_t *payload,
         uint32_t payload_length
     );
 

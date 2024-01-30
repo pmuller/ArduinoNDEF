@@ -5,147 +5,67 @@
 #include "uri.hpp"
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-NdefRecord::NdefRecord()
-{
-  is_message_begin = false;
-  is_message_end = false;
-  type_name_format = TNF_EMPTY;
-  type = nullptr;
-  type_length = 0;
-  id = nullptr;
-  id_length = 0;
-  payload = nullptr;
-  payload_length = 0;
-}
-
-NdefRecord::~NdefRecord()
-{
-  delete[] type;
-  delete[] id;
-  delete[] payload;
-}
-
-#define REALLOC_FIELD_OR_FAIL(name, size)                                              \
-  auto pointer = new uint8_t[size];                                                    \
-  if (pointer == nullptr)                                                              \
-  {                                                                                    \
-    PRINT(F("NdefRecord::set_"));                                                      \
-    PRINT(#name);                                                                      \
-    PRINTLN(F(" failed to allocate memory"));                                          \
-    return NDEF_ERROR_MALLOC_FAILED;                                                   \
-  }                                                                                    \
-  delete[] this->name;                                                                 \
-  this->name = pointer;
-
-#define SET_FIELD(name)                                                                \
-  REALLOC_FIELD_OR_FAIL(name, name##_length);                                          \
-  memcpy(this->name, name, name##_length);                                             \
-  this->name##_length = name##_length;                                                 \
-  return NDEF_SUCCESS;
-
-uint8_t *NdefRecord::get_type() { return type; }
-
-uint8_t NdefRecord::get_type_length() { return type_length; }
-
-int8_t NdefRecord::set_type(uint8_t *type, uint8_t type_length) { SET_FIELD(type); }
-
-int8_t NdefRecord::set_type(RTD type)
-{
-  REALLOC_FIELD_OR_FAIL(type, 1);
-  this->type[0] = type;
-  this->type_length = 1;
-  return NDEF_SUCCESS;
-}
-
-uint8_t *NdefRecord::get_id() { return id; }
-
-uint8_t NdefRecord::get_id_length() { return id_length; }
-
-int8_t NdefRecord::set_id(uint8_t *id, uint8_t id_length) { SET_FIELD(id); }
-
-uint8_t *NdefRecord::get_payload() { return payload; }
-
-uint32_t NdefRecord::get_payload_length() { return payload_length; }
-
-int8_t NdefRecord::set_payload(const uint8_t *payload, uint32_t payload_length)
-{
-  SET_FIELD(payload);
-}
 
 uint8_t *NdefRecord::encode()
 {
   auto result = new uint8_t[get_encoded_size()];
   auto result_ptr = result;
-
   if (result == nullptr)
-  {
-    PRINTLN(F("NdefRecord::encode failed to allocate memory"));
     return nullptr;
-  }
+
+  bool is_short_record = _payload.length() <= 0xff;
 
   // Build header
-  uint8_t tnf_flags = 0;
-  if (is_message_begin)
-    tnf_flags |= NDEF_RECORD_HEADER_MB_FLAG_MASK;
-  if (is_message_end)
-    tnf_flags |= NDEF_RECORD_HEADER_ME_FLAG_MASK;
-  if (payload_length < 256)
-    tnf_flags |= NDEF_RECORD_HEADER_SR_FLAG_MASK;
-  if (id_length > 0)
-    tnf_flags |= NDEF_RECORD_HEADER_IL_FLAG_MASK;
-  tnf_flags |= type_name_format;
+  *result_ptr++ = 0 | (is_message_begin ? NDEF_RECORD_HEADER_MB_FLAG_MASK : 0) |
+                  (is_message_end ? NDEF_RECORD_HEADER_ME_FLAG_MASK : 0) |
+                  (is_short_record ? NDEF_RECORD_HEADER_SR_FLAG_MASK : 0) |
+                  (_id.length() > 0 ? NDEF_RECORD_HEADER_IL_FLAG_MASK : 0) |
+                  type_name_format;
+  *result_ptr++ = _type.length();
 
-  *result_ptr++ = tnf_flags;
-  *result_ptr++ = type_length;
-
-  if (payload_length > 255)
-  {
-    *result_ptr++ = (payload_length >> 24) & 0xFF;
-    *result_ptr++ = (payload_length >> 16) & 0xFF;
-    *result_ptr++ = (payload_length >> 8) & 0xFF;
-    *result_ptr++ = payload_length & 0xFF;
-  }
+  if (is_short_record)
+    *result_ptr++ = _payload.length();
   else
   {
-    *result_ptr++ = payload_length;
+    *result_ptr++ = (_payload.length() >> 24) & 0xFF;
+    *result_ptr++ = (_payload.length() >> 16) & 0xFF;
+    *result_ptr++ = (_payload.length() >> 8) & 0xFF;
+    *result_ptr++ = _payload.length() & 0xFF;
   }
 
-  if (id_length > 0)
+  if (_id.length() > 0)
+    *result_ptr++ = _id.length();
+
+  memcpy(result_ptr, _type.data(), _type.length());
+  result_ptr += _type.length();
+
+  if (_id.length() > 0)
   {
-    *result_ptr++ = id_length;
+    memcpy(result_ptr, _id.data(), _id.length());
+    result_ptr += _id.length();
   }
 
-  memcpy(result_ptr, type, type_length);
-  result_ptr += type_length;
-
-  if (id_length > 0)
-  {
-    memcpy(result_ptr, id, id_length);
-    result_ptr += id_length;
-  }
-
-  memcpy(result_ptr, payload, payload_length);
-  result_ptr += payload_length;
+  memcpy(result_ptr, _payload.data(), _payload.length());
+  result_ptr += _payload.length();
 
   return result;
 }
 
 uint32_t NdefRecord::get_encoded_size()
 {
-  return 2                              // TNF + flags + type length
-       + (payload_length > 255 ? 4 : 1) // payload length size
-       + (id_length > 0 ? 1 : 0)        // ID length size
-       + type_length + id_length + payload_length;
+  return 2                                 // TNF + flags + type length
+       + (_payload.length() > 255 ? 4 : 1) // payload length size
+       + (_id.length() > 0 ? 1 : 0)        // ID length size
+       + _type.length() + _id.length() + _payload.length();
 }
 
 #define INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(size)                                  \
   minimum_length += size;                                                              \
   if (data_length < minimum_length)                                                    \
   {                                                                                    \
-    delete record;                                                                     \
     PRINT(F("NdefRecord::decode failed: data_length < minimum_length: "));             \
     PRINT(data_length);                                                                \
     PRINT(F(" < "));                                                                   \
@@ -168,10 +88,9 @@ NdefRecord *NdefRecord::decode(uint8_t *data, uint32_t data_length)
     return nullptr;
   }
 
-  auto record = new NdefRecord();
-  record->is_message_begin = tnf_flags & NDEF_RECORD_HEADER_MB_FLAG_MASK;
-  record->is_message_end = tnf_flags & NDEF_RECORD_HEADER_ME_FLAG_MASK;
-  record->type_name_format = (TNF)(tnf_flags & NDEF_RECORD_HEADER_TNF_MASK);
+  auto is_message_begin = tnf_flags & NDEF_RECORD_HEADER_MB_FLAG_MASK;
+  auto is_message_end = tnf_flags & NDEF_RECORD_HEADER_ME_FLAG_MASK;
+  auto type_name_format = (TNF)(tnf_flags & NDEF_RECORD_HEADER_TNF_MASK);
 
   // Expect at least:
   // - 1 uint8_t for flags + TNF
@@ -180,69 +99,99 @@ NdefRecord *NdefRecord::decode(uint8_t *data, uint32_t data_length)
   INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(3);
 
   // Type length
-  record->type_length = *data_ptr++;
-  INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(record->type_length);
+  auto type_length = *data_ptr++;
+  INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(type_length);
 
   // Payload length
+  uint32_t payload_length;
   if (tnf_flags & NDEF_RECORD_HEADER_SR_FLAG_MASK)
-    record->payload_length = *data_ptr++;
+    payload_length = *data_ptr++;
   else
   {
     // Expect at least 3 more uint8_ts to store payload length
     INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(3);
     // Extract payload_length
-    record->payload_length = *data_ptr++ << 24;
-    record->payload_length |= *data_ptr++ << 16;
-    record->payload_length |= *data_ptr++ << 8;
-    record->payload_length |= *data_ptr++;
+    payload_length = *data_ptr++ << 24;
+    payload_length |= *data_ptr++ << 16;
+    payload_length |= *data_ptr++ << 8;
+    payload_length |= *data_ptr++;
   }
-  INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(record->payload_length);
+  INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(payload_length);
 
   // ID length
-  if (tnf_flags & 0b00001000) // IL=1
+  uint8_t id_length = 0;
+  if (tnf_flags & NDEF_RECORD_HEADER_IL_FLAG_MASK)
   {
-    record->id_length = *data_ptr++;
-    INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(record->id_length);
+    id_length = *data_ptr++;
+    INCREASE_MINIMUM_LENGTH_OR_DECODE_ERROR(id_length);
   }
-  else
-    record->id_length = 0;
 
   // Type
-  record->type = new uint8_t[record->type_length];
-
-  if (record->type == nullptr)
-    goto MALLOC_FAILED;
-
-  memcpy(record->type, data_ptr, record->type_length);
-  data_ptr += record->type_length;
+  auto type_data = new uint8_t[type_length];
+  if (type_data == nullptr)
+    return nullptr;
+  memcpy(type_data, data_ptr, type_length);
+  data_ptr += type_length;
+  auto type =
+      new NdefRecordType(type_data, type_length, NdefRecordType::OwnershipUnique);
+  if (type == nullptr)
+  {
+    delete type_data;
+    return nullptr;
+  }
 
   // ID
-  if (record->id_length > 0)
+  uint8_t *id_data = nullptr;
+  if (id_length > 0)
   {
-    record->id = new uint8_t[record->id_length];
-
-    if (record->id == nullptr)
-      goto MALLOC_FAILED;
-
-    memcpy(record->id, data_ptr, record->id_length);
-    data_ptr += record->id_length;
+    id_data = new uint8_t[id_length];
+    if (id_data == nullptr)
+    {
+      delete type;
+      return nullptr;
+    }
+    memcpy(id_data, data_ptr, id_length);
+    data_ptr += id_length;
+  }
+  auto id = new NdefRecordId(id_data, id_length, NdefRecordId::OwnershipUnique);
+  if (id == nullptr)
+  {
+    delete type;
+    delete id_data;
+    return nullptr;
   }
 
   // Payload
-  record->payload = new uint8_t[record->payload_length];
+  uint8_t *payload_data = new uint8_t[payload_length];
+  if (payload_data == nullptr)
+  {
+    delete type;
+    delete id;
+    return nullptr;
+  }
+  memcpy(payload_data, data_ptr, payload_length);
+  data_ptr += payload_length;
+  auto payload = new NdefRecordPayload(
+      payload_data,
+      payload_length,
+      NdefRecordPayload::OwnershipUnique
+  );
+  if (payload == nullptr)
+  {
+    delete type;
+    delete id;
+    delete payload_data;
+    return nullptr;
+  }
 
-  if (record->payload == nullptr)
-    goto MALLOC_FAILED;
-
-  memcpy(record->payload, data_ptr, record->payload_length);
-  data_ptr += record->payload_length;
-
-  return record;
-
-MALLOC_FAILED:
-  PRINTLN(F("NdefRecord::decode failed to allocate memory"));
-  delete record;
-  return nullptr;
+  return new NdefRecord(
+      type_name_format,
+      *type,
+      *payload,
+      is_message_begin,
+      is_message_end,
+      *id
+  );
 }
 
 NdefRecord *NdefRecord::create_text_record(const char *text, const char *language_code)
@@ -257,63 +206,51 @@ NdefRecord *NdefRecord::create_text_record(const char *text, const char *languag
   // Prepare payload
   uint32_t text_length = strlen(text);
   uint32_t payload_length = header_length + text_length;
-  uint8_t payload[payload_length];
+
+  auto payload = new uint8_t[payload_length];
+  if (payload == nullptr)
+    return nullptr;
+
   memcpy(payload, header, header_length);
   memcpy(payload + header_length, text, text_length);
 
-  // Create record
-  auto record = new NdefRecord();
-  record->type_name_format = NdefRecord::TNF_WELL_KNOWN;
-
-  if (record->set_type(NdefRecord::RTD_TEXT) != NDEF_SUCCESS ||
-      record->set_payload(payload, payload_length) != NDEF_SUCCESS)
-  {
-    delete record;
-    return nullptr;
-  }
-
-  return record;
+  return new NdefRecord(
+      TNF_WELL_KNOWN,
+      *(new NdefRecordType(NdefRecordType::RTD_TEXT)),
+      *(new NdefRecordPayload(
+          payload,
+          payload_length,
+          NdefRecordPayload::OwnershipUnique
+      ))
+  );
 }
 
 NdefRecord *NdefRecord::create_uri_record(const char *uri)
 {
-  auto record = new NdefRecord;
-
-  if (record == nullptr)
-    return nullptr;
-
-  record->type_name_format = NdefRecord::TNF_WELL_KNOWN;
   NdefUriPayload payload(uri);
-
-  if (!payload.is_valid() || record->set_type(NdefRecord::RTD_URI) != NDEF_SUCCESS ||
-      record->set_payload(payload.get_data(), payload.get_length()) != NDEF_SUCCESS)
-  {
-    delete record;
+  if (!payload.is_valid())
     return nullptr;
-  }
 
-  return record;
+  auto payload_field = new NdefRecordPayload(payload.data(), payload.length());
+  if (payload_field == nullptr)
+    return nullptr;
+
+  return new NdefRecord(
+      NdefRecord::TNF_WELL_KNOWN,
+      *(new NdefRecordType(NdefRecordType::RTD_URI)),
+      *payload_field
+  );
 }
 
 NdefRecord *NdefRecord::create_mime_media_record(
     const char *mime_type, const uint8_t *payload, uint32_t payload_length
 )
 {
-  auto record = new NdefRecord;
-
-  if (record == nullptr)
-    return nullptr;
-
-  record->type_name_format = NdefRecord::TNF_MIME_MEDIA;
-
-  if (record->set_type((uint8_t *)mime_type, strlen(mime_type)) != NDEF_SUCCESS ||
-      record->set_payload(payload, payload_length) != NDEF_SUCCESS)
-  {
-    delete record;
-    return nullptr;
-  }
-
-  return record;
+  return new NdefRecord(
+      NdefRecord::TNF_MIME_MEDIA,
+      *(new NdefRecordType(mime_type)),
+      *(new NdefRecordPayload(payload, payload_length))
+  );
 }
 
 #define NDEF_RECORD_EXTERNAL_TYPE_PREFIX "urn:nfc:ext:"
@@ -322,7 +259,7 @@ NdefRecord *NdefRecord::create_mime_media_record(
 NdefRecord *NdefRecord::create_external_type_record(
     const char *domain,
     const char *external_type,
-    const uint8_t *payload,
+    uint8_t *payload,
     uint32_t payload_length
 )
 {
@@ -338,48 +275,32 @@ NdefRecord *NdefRecord::create_external_type_record(
   if (domain_length == 0 || external_type_length == 0 || type_length > 0xff)
     return nullptr;
 
-  auto record = new NdefRecord;
-
-  if (record == nullptr)
+  auto type = new uint8_t[type_length];
+  auto pointer = type;
+  if (type == nullptr)
     return nullptr;
-
-  // Populate record
-  record->type_name_format = NdefRecord::TNF_EXTERNAL_TYPE;
-  record->type = new uint8_t[type_length];
-  record->type_length = type_length;
-  record->payload_length = payload_length;
-
-  // Check allocation
-  if (record->type == nullptr)
-  {
-    delete record;
-    return nullptr;
-  }
 
   // Build type field
-  auto pointer = record->type;
-  // Add prefix
+  // 1. Add prefix
   memcpy(
       pointer,
       NDEF_RECORD_EXTERNAL_TYPE_PREFIX,
       NDEF_RECORD_EXTERNAL_TYPE_PREFIX_LENGTH
   );
   pointer += NDEF_RECORD_EXTERNAL_TYPE_PREFIX_LENGTH;
-  // Add domain
+  // 2. Add domain
   memcpy(pointer, domain, domain_length);
   pointer += domain_length;
-  // Add ':' separator
+  // 3. Add ':' separator
   *pointer = ':';
   pointer++;
-  // Add external type
+  // 4. Add external type
   memcpy(pointer, external_type, external_type_length);
 
-  // Copy payload field
-  if (record->set_payload(payload, payload_length) != NDEF_SUCCESS)
-  {
-    delete record;
-    return nullptr;
-  }
-
-  return record;
+  return new NdefRecord(
+      TNF_EXTERNAL_TYPE,
+      *(new NdefRecordType(type, type_length, NdefRecordType::OwnershipUnique)),
+      *(new NdefRecordPayload(payload, payload_length, NdefRecordPayload::OwnershipCopy)
+      )
+  );
 }

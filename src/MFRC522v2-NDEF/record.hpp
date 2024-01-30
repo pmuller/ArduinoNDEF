@@ -1,5 +1,6 @@
 #pragma once
-#include <stdint.h>
+
+#include "field.hpp"
 
 // Message Begin flag (MB)
 #define NDEF_RECORD_HEADER_MB_FLAG_MASK 0b10000000
@@ -15,7 +16,11 @@
 #define NDEF_RECORD_HEADER_TNF_MASK 0b00000111
 
 /**
- * @brief A NDEF message record
+ * @brief Class representing an NDEF record.
+ *
+ * An NDEF record is a data structure used in NFC (Near Field Communication) to store
+ * and exchange data. This class provides methods to create, encode, decode, and
+ * manipulate NDEF records.
  */
 class NdefRecord
 {
@@ -36,15 +41,6 @@ class NdefRecord
     };
 
     /**
-     * @brief NFC Record Type Definition
-     */
-    enum RTD
-    {
-      RTD_TEXT = 0x54,
-      RTD_URI = 0x55
-    };
-
-    /**
      * @brief Message Begin flag (MB)
      */
     bool is_message_begin;
@@ -60,91 +56,36 @@ class NdefRecord
     TNF type_name_format;
 
     /**
-     * @brief Create an empty NDEF record
+     * @brief Create a NDEF record
+     *
+     * @param type_name_format Type Name Format
+     * @param type The type
+     * @param payload The payload
+     * @param is_message_begin Message Begin flag (MB)
+     * @param is_message_end Message End flag (ME)
+     * @param id The ID
      */
-    NdefRecord();
+    NdefRecord(
+        TNF type_name_format = TNF_EMPTY,
+        const NdefRecordType &type = *(new NdefRecordType()),
+        const NdefRecordPayload &payload = *(new NdefRecordPayload()),
+        bool is_message_begin = false,
+        bool is_message_end = false,
+        const NdefRecordId &id = *(new NdefRecordId())
+    ) :
+        is_message_begin(is_message_begin),
+        is_message_end(is_message_end), type_name_format(type_name_format), _type(type),
+        _id(id), _payload(payload){};
 
     /**
      * @brief Destroy the NDEF record
      */
-    ~NdefRecord();
-
-    /**
-     * @brief Get the record type field
-     *
-     * @return uint8_t* The type
-     */
-    uint8_t *get_type();
-
-    /**
-     * @brief Get the record type field length
-     *
-     * @return uint8_t The type length
-     */
-    uint8_t get_type_length();
-
-    /**
-     * @brief Set the record type field
-     *
-     * @param type The type
-     * @param type_length The type length
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t set_type(uint8_t *type, uint8_t type_length);
-
-    /**
-     * @brief Set the record type field
-     *
-     * @param type The type
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t set_type(RTD type);
-
-    /**
-     * @brief Get the record ID field
-     *
-     * @return uint8_t* The ID
-     */
-    uint8_t *get_id();
-
-    /**
-     * @brief Get the record ID field length
-     *
-     * @return uint8_t The ID length
-     */
-    uint8_t get_id_length();
-
-    /**
-     * @brief Set the record ID field
-     *
-     * @param id The ID
-     * @param id_length The ID length
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t set_id(uint8_t *id, uint8_t id_length);
-
-    /**
-     * @brief Get the record payload field
-     *
-     * @return uint8_t* The payload
-     */
-    uint8_t *get_payload();
-
-    /**
-     * @brief Get the record payload field length
-     *
-     * @return uint32_t The payload length
-     */
-    uint32_t get_payload_length();
-
-    /**
-     * @brief Set the record payload field
-     *
-     * @param payload The payload
-     * @param payload_length The payload length
-     * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
-     */
-    int8_t set_payload(const uint8_t *payload, uint32_t payload_length);
+    ~NdefRecord()
+    {
+      delete &_type;
+      delete &_id;
+      delete &_payload;
+    };
 
     /**
      * @brief Get the size of the encoded NDEF record
@@ -210,15 +151,16 @@ class NdefRecord
     static NdefRecord *create_external_type_record(
         const char *domain,
         const char *external_type,
-        const uint8_t *payload,
+        uint8_t *payload,
         uint32_t payload_length
     );
 
-  private:
-    uint8_t *type;
-    uint8_t type_length;
-    uint8_t *id;
-    uint8_t id_length;
-    uint8_t *payload;
-    uint32_t payload_length;
+    const NdefRecordType &type() const { return _type; };
+    const NdefRecordId &id() const { return _id; };
+    const NdefRecordPayload &payload() const { return _payload; };
+
+  protected:
+    const NdefRecordType &_type;
+    const NdefRecordId &_id;
+    const NdefRecordPayload &_payload;
 };
