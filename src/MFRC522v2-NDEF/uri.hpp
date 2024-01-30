@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-#define NDEF_URI_CODE_IDENTIFIER_COUNT 36
-
 /**
  * @brief NDEF URI payload builder
  * @ref NFCForum-TS-RTD_URI_1.0.pdf
