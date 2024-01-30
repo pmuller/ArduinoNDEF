@@ -54,7 +54,7 @@ uint8_t *NdefRecord::encode() const
   return result;
 }
 
-uint32_t NdefRecord::get_encoded_size()
+uint32_t NdefRecord::get_encoded_size() const
 {
   return 2                                 // TNF + flags + type length
        + (_payload.length() > 255 ? 4 : 1) // payload length size

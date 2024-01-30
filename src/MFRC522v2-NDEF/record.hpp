@@ -92,7 +92,7 @@ class NdefRecord
      *
      * @return uint32_t Encoded size
      */
-    uint32_t get_encoded_size();
+    uint32_t get_encoded_size() const;
 
     /**
      * @brief Encode the NDEF record
