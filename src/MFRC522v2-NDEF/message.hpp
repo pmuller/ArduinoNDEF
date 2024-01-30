@@ -102,7 +102,7 @@ class NdefMessage
      * NDEF_ERROR_INVALID_RECORD_COUNT, NDEF_ERROR_INVALID_RECORD_LENGTH or
      * NDEF_ERROR_CHUNK_NOT_SUPPORTED
      */
-    int8_t decode(uint8_t *data, uint32_t data_length);
+    int8_t decode(const uint8_t *data, uint32_t data_length);
 
     /**
      * @brief Get the record count

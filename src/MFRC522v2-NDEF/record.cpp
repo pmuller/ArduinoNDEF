@@ -74,9 +74,9 @@ uint32_t NdefRecord::get_encoded_size()
     return nullptr;                                                                    \
   }
 
-NdefRecord *NdefRecord::decode(uint8_t *data, uint32_t data_length)
+NdefRecord *NdefRecord::decode(const uint8_t *data, uint32_t data_length)
 {
-  uint8_t *data_ptr = data;
+  const uint8_t *data_ptr = data;
   uint8_t minimum_length = 0;
 
   // Decode flags and type name format
