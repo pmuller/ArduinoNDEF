@@ -1,14 +1,5 @@
 #pragma once
 
-// Early return when an error occurs
-#define RETURN_IF_ERROR(expression, error_handling_block)                              \
-  error = expression;                                                                  \
-  if (error != NDEF_SUCCESS)                                                           \
-  {                                                                                    \
-    error_handling_block;                                                              \
-    return error;                                                                      \
-  }
-
 // Only log debug messages when DEBUG is defined
 #ifdef DEBUG
 #define PRINT(value) Serial.print(value)

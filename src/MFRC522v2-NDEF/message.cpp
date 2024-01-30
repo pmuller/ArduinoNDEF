@@ -195,8 +195,11 @@ int8_t NdefMessage::decode(uint8_t *data, uint32_t data_length)
     }
 
     found_last_message = record->is_message_end;
-    int8_t error;
-    RETURN_IF_ERROR(add_record(record), { delete record; });
+
+    int8_t error = add_record(record);
+    if (error != NDEF_SUCCESS)
+      return error;
+
     data_ptr += record->get_encoded_size();
   }
 
