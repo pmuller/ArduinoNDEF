@@ -192,3 +192,10 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
       *id
   );
 }
+
+bool NdefRecord::operator==(const NdefRecord &other) const
+{
+  return type_name_format == other.type_name_format && _type == other._type &&
+         _payload == other._payload && is_message_begin == other.is_message_begin &&
+         is_message_end == other.is_message_end && _id == other._id;
+}

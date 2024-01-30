@@ -102,6 +102,15 @@ class NdefRecord
     uint8_t *encode() const;
 
     /**
+     * @brief Check if the NDEF record is equal to another NDEF record
+     *
+     * @param other The other NDEF record
+     * @return true The NDEF records are equal
+     * @return false The NDEF records are not equal
+     */
+    bool operator==(const NdefRecord &other) const;
+
+    /**
      * @brief Decode an encoded NDEF record
      *
      * @param data Encoded NDEF record
