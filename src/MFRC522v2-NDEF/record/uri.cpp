@@ -4,8 +4,10 @@
 
 namespace ArduinoNDEF
 {
+namespace Record
+{
 
-NdefUriRecord *NdefUriRecord::create(
+Uri *Uri::create(
     const char *uri, bool is_message_begin, bool is_message_end, const NdefRecordId &id
 )
 {
@@ -19,22 +21,15 @@ NdefUriRecord *NdefUriRecord::create(
   if (payload_field == nullptr || type_field == nullptr)
     return nullptr;
 
-  return new NdefUriRecord(
-      *type_field,
-      *payload_field,
-      is_message_begin,
-      is_message_end,
-      id
-  );
+  return new Uri(*type_field, *payload_field, is_message_begin, is_message_end, id);
 }
 
-NdefUriRecord *NdefUriRecord::create(const char *uri, const NdefRecordId &id)
+Uri *Uri::create(const char *uri, const NdefRecordId &id)
 {
   return create(uri, false, false, id);
 }
 
-NdefUriRecord *
-NdefUriRecord::create(const char *uri, bool is_message_begin, bool is_message_end)
+Uri *Uri::create(const char *uri, bool is_message_begin, bool is_message_end)
 {
   auto id = new NdefRecordId();
   if (id == nullptr)
@@ -42,9 +37,7 @@ NdefUriRecord::create(const char *uri, bool is_message_begin, bool is_message_en
   return create(uri, is_message_begin, is_message_end, *id);
 }
 
-NdefUriRecord *NdefUriRecord::create(const char *uri)
-{
-  return create(uri, false, false);
-}
+Uri *Uri::create(const char *uri) { return create(uri, false, false); }
 
+} // namespace Record
 } // namespace ArduinoNDEF

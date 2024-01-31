@@ -5,8 +5,10 @@
 
 namespace ArduinoNDEF
 {
+namespace Record
+{
 
-NdefExternalTypeRecord *NdefExternalTypeRecord::create(
+ExternalType *ExternalType::create(
     const char *domain,
     const char *external_type,
     const uint8_t *payload,
@@ -64,7 +66,7 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
     return nullptr;
   }
 
-  return new NdefExternalTypeRecord(
+  return new ExternalType(
       *type_field,
       *payload_field,
       is_message_begin,
@@ -73,7 +75,7 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
   );
 }
 
-NdefExternalTypeRecord *NdefExternalTypeRecord::create(
+ExternalType *ExternalType::create(
     const char *domain,
     const char *external_type,
     const uint8_t *payload,
@@ -98,7 +100,7 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
   );
 }
 
-NdefExternalTypeRecord *NdefExternalTypeRecord::create(
+ExternalType *ExternalType::create(
     const char *domain,
     const char *external_type,
     const uint8_t *payload,
@@ -109,7 +111,7 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
   return create(domain, external_type, payload, payload_length, false, false, id);
 }
 
-NdefExternalTypeRecord *NdefExternalTypeRecord::create(
+ExternalType *ExternalType::create(
     const char *domain,
     const char *external_type,
     const uint8_t *payload,
@@ -119,7 +121,7 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
   return create(domain, external_type, payload, payload_length, false, false);
 }
 
-NdefExternalTypeRecord *NdefExternalTypeRecord::create(
+ExternalType *ExternalType::create(
     const char *domain,
     const char *external_type,
     const char *payload,
@@ -142,7 +144,7 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
   );
 }
 
-NdefExternalTypeRecord *NdefExternalTypeRecord::create(
+ExternalType *ExternalType::create(
     const char *domain,
     const char *external_type,
     const char *payload,
@@ -158,7 +160,7 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
   return create(domain, external_type, payload, is_message_begin, is_message_end, *id);
 }
 
-NdefExternalTypeRecord *NdefExternalTypeRecord::create(
+ExternalType *ExternalType::create(
     const char *domain,
     const char *external_type,
     const char *payload,
@@ -168,11 +170,11 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
   return create(domain, external_type, payload, false, false, id);
 }
 
-NdefExternalTypeRecord *NdefExternalTypeRecord::create(
-    const char *domain, const char *external_type, const char *payload
-)
+ExternalType *
+ExternalType::create(const char *domain, const char *external_type, const char *payload)
 {
   return create(domain, external_type, payload, false, false);
 }
 
+} // namespace Record
 } // namespace ArduinoNDEF

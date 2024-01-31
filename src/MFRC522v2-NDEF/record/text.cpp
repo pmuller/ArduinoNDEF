@@ -2,8 +2,10 @@
 
 namespace ArduinoNDEF
 {
+namespace Record
+{
 
-NdefTextRecord *NdefTextRecord::create(
+Text *Text::create(
     const char *text,
     const char *language_code,
     bool is_message_begin,
@@ -44,10 +46,10 @@ NdefTextRecord *NdefTextRecord::create(
   if (type == nullptr || payload == nullptr)
     return nullptr;
 
-  return new NdefTextRecord(*type, *payload, is_message_begin, is_message_end, id);
+  return new Text(*type, *payload, is_message_begin, is_message_end, id);
 }
 
-NdefTextRecord *NdefTextRecord::create(const char *text, const char *language_code)
+Text *Text::create(const char *text, const char *language_code)
 {
   auto id = new NdefRecordId();
   if (id == nullptr)
@@ -55,14 +57,12 @@ NdefTextRecord *NdefTextRecord::create(const char *text, const char *language_co
   return create(text, language_code, false, false, *id);
 }
 
-NdefTextRecord *NdefTextRecord::create(
-    const char *text, const char *language_code, const NdefRecordId &id
-)
+Text *Text::create(const char *text, const char *language_code, const NdefRecordId &id)
 {
   return create(text, language_code, false, false, id);
 }
 
-NdefTextRecord *NdefTextRecord::create(
+Text *Text::create(
     const char *text,
     const char *language_code,
     bool is_message_begin,
@@ -75,4 +75,5 @@ NdefTextRecord *NdefTextRecord::create(
   return create(text, language_code, is_message_begin, is_message_end, *id);
 }
 
-}
+} // namespace Record
+} // namespace ArduinoNDEF

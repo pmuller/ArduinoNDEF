@@ -2,11 +2,13 @@
 
 namespace ArduinoNDEF
 {
+namespace Record
+{
 
 /**
  * @brief NDEF Text Record
  */
-class NdefTextRecord : public NdefRecord
+class Text : public NdefRecord
 {
   public:
     /**
@@ -17,9 +19,9 @@ class NdefTextRecord : public NdefRecord
      * @param is_message_begin Is this the first record in the message?
      * @param is_message_end Is this the last record in the message?
      * @param id The record ID
-     * @return NdefTextRecord* The NDEF Text Record
+     * @return Text* The NDEF Text Record
      */
-    static NdefTextRecord *create(
+    static Text *create(
         const char *text,
         const char *language_code,
         bool is_message_begin,
@@ -31,18 +33,18 @@ class NdefTextRecord : public NdefRecord
      *
      * @param text The text
      * @param language_code The language code
-     * @return NdefTextRecord* The NDEF Text Record
+     * @return Text* The NDEF Text Record
      */
-    static NdefTextRecord *create(const char *text, const char *language_code);
+    static Text *create(const char *text, const char *language_code);
     /**
      * @brief Create a new NDEF Text Record
      *
      * @param text The text
      * @param language_code The language code
      * @param id The record ID
-     * @return NdefTextRecord* The NDEF Text Record
+     * @return Text* The NDEF Text Record
      */
-    static NdefTextRecord *
+    static Text *
     create(const char *text, const char *language_code, const NdefRecordId &id);
     /**
      * @brief Create a new NDEF Text Record
@@ -51,9 +53,9 @@ class NdefTextRecord : public NdefRecord
      * @param language_code The language code
      * @param is_message_begin Is this the first record in the message?
      * @param is_message_end Is this the last record in the message?
-     * @return NdefTextRecord* The NDEF Text Record
+     * @return Text* The NDEF Text Record
      */
-    static NdefTextRecord *create(
+    static Text *create(
         const char *text,
         const char *language_code,
         bool is_message_begin,
@@ -61,7 +63,7 @@ class NdefTextRecord : public NdefRecord
     );
 
   private:
-    NdefTextRecord(
+    Text(
         const NdefRecordType &type,
         const NdefRecordPayload &payload,
         bool is_message_begin,
@@ -72,4 +74,5 @@ class NdefTextRecord : public NdefRecord
         };
 };
 
+} // namespace Record
 } // namespace ArduinoNDEF

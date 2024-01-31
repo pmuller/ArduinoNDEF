@@ -7,7 +7,7 @@ using namespace ArduinoNDEF;
 
 test(empty_record)
 {
-  auto record = NdefEmptyRecord::create();
+  auto record = Record::Empty::create();
   assertEqual(record->type_name_format, NdefRecord::TNF_EMPTY);
   assertFalse(record->is_message_begin);
   assertFalse(record->is_message_end);
@@ -153,7 +153,7 @@ test(record_decode_long_text)
 
 test(create_text_record)
 {
-  auto record = NdefTextRecord::create("Hello", "en");
+  auto record = Record::Text::create("Hello", "en");
   assertEqual(record->type_name_format, NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record->type().length(), 1);
   assertEqual(record->type().data()[0], NdefRecordType::RTD_TEXT);
@@ -172,7 +172,7 @@ test(create_text_record)
 
 test(create_uri_record)
 {
-  auto record = NdefUriRecord::create("https://hackaday.com");
+  auto record = Record::Uri::create("https://hackaday.com");
   assertEqual(record->type_name_format, NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record->type().length(), 1);
   assertEqual(record->type().data()[0], NdefRecordType::RTD_URI);
@@ -196,7 +196,7 @@ test(create_uri_record)
 
 test(create_mime_media_record)
 {
-  auto record = NdefMimeMediaRecord::create("text/plain", "Hello");
+  auto record = Record::MimeMedia::create("text/plain", "Hello");
   assertEqual(record->type_name_format, NdefRecord::TNF_MIME_MEDIA);
   assertEqual(record->type().length(), 10);
   assertEqual(record->type().data()[0], static_cast<uint8_t>('t'));
@@ -221,7 +221,7 @@ test(create_mime_media_record)
 
 test(create_external_type_record)
 {
-  auto record = NdefExternalTypeRecord::create("com.example", "custom-type", "Hello");
+  auto record = Record::ExternalType::create("com.example", "custom-type", "Hello");
   assertEqual(record->type_name_format, NdefRecord::TNF_EXTERNAL_TYPE);
   assertEqual(record->type().length(), 35);
   assertEqual(record->type().data()[0], static_cast<uint8_t>('u'));

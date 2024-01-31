@@ -4,8 +4,10 @@
 
 namespace ArduinoNDEF
 {
+namespace Record
+{
 
-NdefMimeMediaRecord *NdefMimeMediaRecord::create(
+MimeMedia *MimeMedia::create(
     const char *mime_type,
     const uint8_t *payload,
     uint32_t payload_length,
@@ -20,7 +22,7 @@ NdefMimeMediaRecord *NdefMimeMediaRecord::create(
   if (type_field == nullptr || payload_field == nullptr)
     return nullptr;
 
-  return new NdefMimeMediaRecord(
+  return new MimeMedia(
       *type_field,
       *payload_field,
       is_message_begin,
@@ -29,7 +31,7 @@ NdefMimeMediaRecord *NdefMimeMediaRecord::create(
   );
 }
 
-NdefMimeMediaRecord *NdefMimeMediaRecord::create(
+MimeMedia *MimeMedia::create(
     const char *mime_type,
     const uint8_t *payload,
     uint32_t payload_length,
@@ -52,7 +54,7 @@ NdefMimeMediaRecord *NdefMimeMediaRecord::create(
   );
 }
 
-NdefMimeMediaRecord *NdefMimeMediaRecord::create(
+MimeMedia *MimeMedia::create(
     const char *mime_type,
     const uint8_t *payload,
     uint32_t payload_length,
@@ -62,14 +64,14 @@ NdefMimeMediaRecord *NdefMimeMediaRecord::create(
   return create(mime_type, payload, payload_length, false, false, id);
 }
 
-NdefMimeMediaRecord *NdefMimeMediaRecord::create(
+MimeMedia *MimeMedia::create(
     const char *mime_type, const uint8_t *payload, uint32_t payload_length
 )
 {
   return create(mime_type, payload, payload_length, false, false);
 }
 
-NdefMimeMediaRecord *NdefMimeMediaRecord::create(
+MimeMedia *MimeMedia::create(
     const char *mime_type,
     const char *payload,
     bool is_message_begin,
@@ -87,7 +89,7 @@ NdefMimeMediaRecord *NdefMimeMediaRecord::create(
   );
 }
 
-NdefMimeMediaRecord *NdefMimeMediaRecord::create(
+MimeMedia *MimeMedia::create(
     const char *mime_type,
     const char *payload,
     bool is_message_begin,
@@ -103,9 +105,8 @@ NdefMimeMediaRecord *NdefMimeMediaRecord::create(
   );
 }
 
-NdefMimeMediaRecord *NdefMimeMediaRecord::create(
-    const char *mime_type, const char *payload, const NdefRecordId &id
-)
+MimeMedia *
+MimeMedia::create(const char *mime_type, const char *payload, const NdefRecordId &id)
 {
   return create(
       mime_type,
@@ -115,10 +116,10 @@ NdefMimeMediaRecord *NdefMimeMediaRecord::create(
   );
 }
 
-NdefMimeMediaRecord *
-NdefMimeMediaRecord::create(const char *mime_type, const char *payload)
+MimeMedia *MimeMedia::create(const char *mime_type, const char *payload)
 {
   return create(mime_type, reinterpret_cast<const uint8_t *>(payload), strlen(payload));
 }
 
+} // namespace Record
 } // namespace ArduinoNDEF

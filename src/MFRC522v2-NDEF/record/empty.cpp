@@ -2,10 +2,10 @@
 
 namespace ArduinoNDEF
 {
+namespace Record
+{
 
-NdefEmptyRecord *NdefEmptyRecord::create(
-    bool is_message_begin, bool is_message_end, const NdefRecordId &id
-)
+Empty *Empty::create(bool is_message_begin, bool is_message_end, const NdefRecordId &id)
 {
   auto type_field = new NdefRecordType();
   auto payload_field = new NdefRecordPayload();
@@ -13,21 +13,12 @@ NdefEmptyRecord *NdefEmptyRecord::create(
   if (type_field == nullptr || payload_field == nullptr)
     return nullptr;
 
-  return new NdefEmptyRecord(
-      *type_field,
-      *payload_field,
-      is_message_begin,
-      is_message_end,
-      id
-  );
+  return new Empty(*type_field, *payload_field, is_message_begin, is_message_end, id);
 }
 
-NdefEmptyRecord *NdefEmptyRecord::create(const NdefRecordId &id)
-{
-  return create(false, false, id);
-}
+Empty *Empty::create(const NdefRecordId &id) { return create(false, false, id); }
 
-NdefEmptyRecord *NdefEmptyRecord::create(bool is_message_begin, bool is_message_end)
+Empty *Empty::create(bool is_message_begin, bool is_message_end)
 {
   auto id = new NdefRecordId();
   if (id == nullptr)
@@ -36,6 +27,7 @@ NdefEmptyRecord *NdefEmptyRecord::create(bool is_message_begin, bool is_message_
   return create(is_message_begin, is_message_end, *id);
 }
 
-NdefEmptyRecord *NdefEmptyRecord::create() { return create(false, false); }
+Empty *Empty::create() { return create(false, false); }
 
-}
+} // namespace Record
+} // namespace ArduinoNDEF

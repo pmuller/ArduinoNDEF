@@ -2,11 +2,13 @@
 
 namespace ArduinoNDEF
 {
+namespace Record
+{
 
 /**
  * @brief NDEF External Type Record
  */
-class NdefExternalTypeRecord : public NdefRecord
+class ExternalType : public NdefRecord
 {
   public:
     /**
@@ -19,9 +21,9 @@ class NdefExternalTypeRecord : public NdefRecord
      * @param is_message_begin Is this the first record in the message?
      * @param is_message_end Is this the last record in the message?
      * @param id The record ID
-     * @return NdefExternalTypeRecord* The NDEF External Type Record
+     * @return ExternalType* The NDEF External Type Record
      */
-    static NdefExternalTypeRecord *create(
+    static ExternalType *create(
         const char *domain,
         const char *external_type,
         const uint8_t *payload,
@@ -38,9 +40,9 @@ class NdefExternalTypeRecord : public NdefRecord
      * @param payload The payload
      * @param payload_length The payload length
      * @param id The record ID
-     * @return NdefExternalTypeRecord* The NDEF External Type Record
+     * @return ExternalType* The NDEF External Type Record
      */
-    static NdefExternalTypeRecord *create(
+    static ExternalType *create(
         const char *domain,
         const char *external_type,
         const uint8_t *payload,
@@ -56,9 +58,9 @@ class NdefExternalTypeRecord : public NdefRecord
      * @param payload_length The payload length
      * @param is_message_begin Is this the first record in the message?
      * @param is_message_end Is this the last record in the message?
-     * @return NdefExternalTypeRecord* The NDEF External Type Record
+     * @return ExternalType* The NDEF External Type Record
      */
-    static NdefExternalTypeRecord *create(
+    static ExternalType *create(
         const char *domain,
         const char *external_type,
         const uint8_t *payload,
@@ -73,9 +75,9 @@ class NdefExternalTypeRecord : public NdefRecord
      * @param external_type The external type
      * @param payload The payload
      * @param payload_length The payload length
-     * @return NdefExternalTypeRecord* The NDEF External Type Record
+     * @return ExternalType* The NDEF External Type Record
      */
-    static NdefExternalTypeRecord *create(
+    static ExternalType *create(
         const char *domain,
         const char *external_type,
         const uint8_t *payload,
@@ -90,9 +92,9 @@ class NdefExternalTypeRecord : public NdefRecord
      * @param is_message_begin Is this the first record in the message?
      * @param is_message_end Is this the last record in the message?
      * @param id The record ID
-     * @return NdefExternalTypeRecord* The NDEF External Type Record
+     * @return ExternalType* The NDEF External Type Record
      */
-    static NdefExternalTypeRecord *create(
+    static ExternalType *create(
         const char *domain,
         const char *external_type,
         const char *payload,
@@ -107,9 +109,9 @@ class NdefExternalTypeRecord : public NdefRecord
      * @param external_type The external type
      * @param payload The payload
      * @param id The record ID
-     * @return NdefExternalTypeRecord* The NDEF External Type Record
+     * @return ExternalType* The NDEF External Type Record
      */
-    static NdefExternalTypeRecord *create(
+    static ExternalType *create(
         const char *domain,
         const char *external_type,
         const char *payload,
@@ -123,9 +125,9 @@ class NdefExternalTypeRecord : public NdefRecord
      * @param payload The payload
      * @param is_message_begin Is this the first record in the message?
      * @param is_message_end Is this the last record in the message?
-     * @return NdefExternalTypeRecord* The NDEF External Type Record
+     * @return ExternalType* The NDEF External Type Record
      */
-    static NdefExternalTypeRecord *create(
+    static ExternalType *create(
         const char *domain,
         const char *external_type,
         const char *payload,
@@ -138,13 +140,13 @@ class NdefExternalTypeRecord : public NdefRecord
      * @param domain The domain
      * @param external_type The external type
      * @param payload The payload
-     * @return NdefExternalTypeRecord* The NDEF External Type Record
+     * @return ExternalType* The NDEF External Type Record
      */
-    static NdefExternalTypeRecord *
+    static ExternalType *
     create(const char *domain, const char *external_type, const char *payload);
 
   private:
-    NdefExternalTypeRecord(
+    ExternalType(
         const NdefRecordType &type,
         const NdefRecordPayload &payload,
         bool is_message_begin,
@@ -156,4 +158,5 @@ class NdefExternalTypeRecord : public NdefRecord
         ){};
 };
 
+} // namespace Record
 } // namespace ArduinoNDEF
