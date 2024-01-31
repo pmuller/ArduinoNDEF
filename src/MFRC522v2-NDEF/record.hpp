@@ -21,6 +21,21 @@ namespace Record
 {
 
 /**
+ * @brief Type Name Format (TNF) Definition
+ */
+enum TNF
+{
+  TNF_EMPTY,
+  TNF_WELL_KNOWN,
+  TNF_MIME_MEDIA,
+  TNF_ABSOLUTE_URI,
+  TNF_EXTERNAL_TYPE,
+  TNF_UNKNOWN,
+  TNF_UNCHANGED,
+  TNF_RESERVED
+};
+
+/**
  * @brief Class representing an NDEF record.
  *
  * An NDEF record is a data structure used in NFC (Near Field Communication) to store
@@ -30,21 +45,6 @@ namespace Record
 class Record
 {
   public:
-    /**
-     * @brief Type Name Format (TNF) Definition
-     */
-    enum TNF
-    {
-      TNF_EMPTY,
-      TNF_WELL_KNOWN,
-      TNF_MIME_MEDIA,
-      TNF_ABSOLUTE_URI,
-      TNF_EXTERNAL_TYPE,
-      TNF_UNKNOWN,
-      TNF_UNCHANGED,
-      TNF_RESERVED
-    };
-
     /**
      * @brief Message Begin flag (MB)
      */
