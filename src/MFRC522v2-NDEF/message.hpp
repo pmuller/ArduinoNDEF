@@ -59,6 +59,17 @@ class NdefMessage
      */
     uint8_t get_record_count();
 
+    /**
+     * @brief Get the record at the given index
+     *
+     * @param index The index of the record
+     * @return NdefRecord* The record
+     */
+    const NdefRecord *record(uint8_t index) const
+    {
+      return index < record_count ? records[index] : nullptr;
+    }
+
   private:
     NdefRecord **records;
     uint8_t record_count;
