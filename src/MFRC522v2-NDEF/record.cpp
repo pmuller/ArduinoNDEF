@@ -88,7 +88,7 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
 
   auto is_message_begin = tnf_flags & NDEF_RECORD_HEADER_MB_FLAG_MASK;
   auto is_message_end = tnf_flags & NDEF_RECORD_HEADER_ME_FLAG_MASK;
-  auto type_name_format = (TNF)(tnf_flags & NDEF_RECORD_HEADER_TNF_MASK);
+  auto type_name_format = static_cast<TNF>(tnf_flags & NDEF_RECORD_HEADER_TNF_MASK);
 
   // Expect at least:
   // - 1 uint8_t for flags + TNF

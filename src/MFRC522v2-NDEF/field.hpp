@@ -71,7 +71,9 @@ template <typename LENGTH> class NdefRecordField
      * @param ownership The ownership of the data
      */
     NdefRecordField(const char *string, Ownership ownership = OwnershipShared) :
-        NdefRecordField((const uint8_t *)string, strlen(string), ownership){};
+        NdefRecordField(
+            reinterpret_cast<const uint8_t *>(string), strlen(string), ownership
+        ){};
 
     /**
      * @brief Copy constructor
