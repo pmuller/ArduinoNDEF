@@ -115,15 +115,6 @@ class Record
      */
     bool operator==(const Record &other) const;
 
-    /**
-     * @brief Decode an encoded NDEF record
-     *
-     * @param data Encoded NDEF record
-     * @param data_length The data length
-     * @return Record* The decoded NDEF record
-     */
-    static Record *decode(const uint8_t &data, uint32_t data_length);
-
     const Field::Type &type() const { return _type; };
     const Field::Id &id() const { return _id; };
     const Field::Payload &payload() const { return _payload; };
@@ -142,6 +133,15 @@ class Record
  * record.
  */
 uint32_t get_encoded_ndef_record_size(const uint8_t *data, uint32_t length);
+
+/**
+ * @brief Decode an encoded NDEF record
+ *
+ * @param data Encoded NDEF record
+ * @param data_length The data length
+ * @return Record* The decoded NDEF record
+ */
+Record *decode(const uint8_t &data, uint32_t data_length);
 
 } // namespace Record
 } // namespace ArduinoNDEF

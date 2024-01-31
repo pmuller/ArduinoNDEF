@@ -138,7 +138,7 @@ Message *Message::decode(const uint8_t *data, uint32_t length)
 
   while (data_ptr < data_end)
   {
-    auto record = Record::Record::decode(*data_ptr, data_end - data_ptr);
+    auto record = Record::decode(*data_ptr, data_end - data_ptr);
 
     if (record == nullptr)
     {

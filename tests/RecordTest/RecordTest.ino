@@ -66,7 +66,7 @@ test(record_decode_short)
       'l',
       'o'
   };
-  auto record = ArduinoNDEF::Record::Record::decode(*encoded, 9);
+  auto record = ArduinoNDEF::Record::decode(*encoded, 9);
   assertTrue(record->is_message_begin);
   assertTrue(record->is_message_end);
   assertEqual(record->type_name_format, ArduinoNDEF::Record::TNF_WELL_KNOWN);
@@ -135,7 +135,7 @@ test(record_decode_long_text)
   // Copy reference text
   memcpy(encoded + 7, LONG_TEXT, 386);
   // Check decoding
-  auto record = ArduinoNDEF::Record::Record::decode(*encoded, 393);
+  auto record = ArduinoNDEF::Record::decode(*encoded, 393);
   delete[] encoded;
   assertFalse(record->is_message_begin);
   assertFalse(record->is_message_end);

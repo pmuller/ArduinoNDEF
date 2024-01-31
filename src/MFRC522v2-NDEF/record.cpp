@@ -77,7 +77,7 @@ uint32_t Record::get_encoded_size() const
     return nullptr;                                                                    \
   }
 
-Record *Record::decode(const uint8_t &data, uint32_t data_length)
+Record *decode(const uint8_t &data, uint32_t data_length)
 {
   const uint8_t *data_ptr = &data;
   uint8_t minimum_length = 0;
