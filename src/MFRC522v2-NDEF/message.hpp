@@ -58,7 +58,7 @@ class Message
      *
      * @return uint8_t Record count
      */
-    uint8_t get_record_count();
+    uint8_t record_count();
 
     /**
      * @brief Get the record at the given index
@@ -68,14 +68,14 @@ class Message
      */
     const Record::Record *record(uint8_t index) const
     {
-      return index < record_count ? records[index] : nullptr;
+      return index < _record_count ? records[index] : nullptr;
     }
 
   private:
     Message(Record::Record **records, uint8_t record_count) :
-        records(records), record_count(record_count){};
+        records(records), _record_count(record_count){};
     Record::Record **records;
-    uint8_t record_count;
+    uint8_t _record_count;
 };
 
 uint8_t count_ndef_message_records(const uint8_t *message, uint32_t size);

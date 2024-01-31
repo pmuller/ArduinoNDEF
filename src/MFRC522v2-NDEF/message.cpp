@@ -13,12 +13,12 @@ namespace ArduinoNDEF
 Message::Message()
 {
   records = nullptr;
-  record_count = 0;
+  _record_count = 0;
 }
 
 Message::~Message()
 {
-  for (uint8_t i = 0; i < record_count; i++)
+  for (uint8_t i = 0; i < _record_count; i++)
     delete records[i];
 
   delete[] records;
@@ -32,7 +32,7 @@ int8_t Message::add_record(Record::Record *record)
     return NDEF_ERROR_RECORD_IS_NULL;
   }
 
-  Record::Record **records = new Record::Record *[record_count + 1];
+  Record::Record **records = new Record::Record *[_record_count + 1];
 
   if (records == nullptr)
   {
@@ -42,24 +42,24 @@ int8_t Message::add_record(Record::Record *record)
 
   if (this->records != nullptr)
   {
-    memcpy(records, this->records, sizeof(Record::Record *) * record_count);
+    memcpy(records, this->records, sizeof(Record::Record *) * _record_count);
     delete[] this->records;
   }
 
   this->records = records;
 
-  if (record_count == 0)
+  if (_record_count == 0)
   {
     record->is_message_begin = true;
     record->is_message_end = true;
   }
   else
   {
-    records[record_count - 1]->is_message_end = false;
+    records[_record_count - 1]->is_message_end = false;
     record->is_message_end = true;
   }
 
-  records[record_count++] = record;
+  records[_record_count++] = record;
 
   return NDEF_SUCCESS;
 }
@@ -68,7 +68,7 @@ uint32_t Message::get_encoded_size()
 {
   uint32_t result = 0;
 
-  for (uint8_t i = 0; i < record_count; i++)
+  for (uint8_t i = 0; i < _record_count; i++)
     result += records[i]->get_encoded_size();
 
   return result;
@@ -85,7 +85,7 @@ uint8_t *Message::encode()
     return nullptr;
   }
 
-  for (uint8_t i = 0; i < record_count; i++)
+  for (uint8_t i = 0; i < _record_count; i++)
   {
     uint8_t *record_encoded = records[i]->encode();
     uint32_t record_encoded_size = records[i]->get_encoded_size();
@@ -159,6 +159,6 @@ Message *Message::decode(const uint8_t *data, uint32_t length)
   return new Message(records, record_count);
 }
 
-uint8_t Message::get_record_count() { return record_count; }
+uint8_t Message::record_count() { return _record_count; }
 
 } // namespace ArduinoNDEF
