@@ -3,6 +3,8 @@
 #include <AUnitVerbose.h>
 #include <MFRC522v2-NDEF/uri.hpp>
 
+using namespace ArduinoNDEF;
+
 // NFCForum-TS-RTD_URI_1.0.pdf - A.1
 test(build_ndef_uri_payload__simple)
 {

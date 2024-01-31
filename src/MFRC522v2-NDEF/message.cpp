@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+namespace ArduinoNDEF
+{
+
 NdefMessage::NdefMessage()
 {
   records = nullptr;
@@ -157,3 +160,5 @@ NdefMessage *NdefMessage::decode(const uint8_t *data, uint32_t length)
 }
 
 uint8_t NdefMessage::get_record_count() { return record_count; }
+
+} // namespace ArduinoNDEF

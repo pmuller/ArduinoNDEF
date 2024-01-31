@@ -1,5 +1,8 @@
 #include "../record.hpp"
 
+namespace ArduinoNDEF
+{
+
 /**
  * @brief NDEF External Type Record
  */
@@ -152,3 +155,5 @@ class NdefExternalTypeRecord : public NdefRecord
             TNF_EXTERNAL_TYPE, type, payload, is_message_begin, is_message_end, id
         ){};
 };
+
+} // namespace ArduinoNDEF

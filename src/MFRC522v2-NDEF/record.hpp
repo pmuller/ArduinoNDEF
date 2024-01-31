@@ -15,6 +15,9 @@
 // Type Name Format
 #define NDEF_RECORD_HEADER_TNF_MASK 0b00000111
 
+namespace ArduinoNDEF
+{
+
 /**
  * @brief Class representing an NDEF record.
  *
@@ -137,3 +140,5 @@ class NdefRecord
  * record.
  */
 uint32_t get_encoded_ndef_record_size(const uint8_t *data, uint32_t length);
+
+} // namespace ArduinoNDEF

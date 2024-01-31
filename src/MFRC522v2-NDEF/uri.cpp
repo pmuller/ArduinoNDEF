@@ -4,6 +4,9 @@
 
 #include <string.h>
 
+namespace ArduinoNDEF
+{
+
 /**
  * @brief NDEF URI identifier codes
  * @ref NFCForum-TS-RTD_URI_1.0.pdf - Table 3. Abbreviation Table
@@ -150,3 +153,5 @@ const char *NdefUriPayload::uri() const
 
   return uri;
 }
+
+} // namespace ArduinoNDEF

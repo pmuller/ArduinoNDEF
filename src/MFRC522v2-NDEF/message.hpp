@@ -4,6 +4,9 @@
 
 #include <stdint.h>
 
+namespace ArduinoNDEF
+{
+
 /**
  * @brief NDEF Message
  */
@@ -76,3 +79,5 @@ class NdefMessage
 };
 
 uint8_t count_ndef_message_records(const uint8_t *message, uint32_t size);
+
+} // namespace ArduinoNDEF

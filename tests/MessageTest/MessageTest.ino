@@ -3,6 +3,8 @@
 #include <AUnitVerbose.h>
 #include <MFRC522v2-NDEF.h>
 
+using namespace ArduinoNDEF;
+
 test(message_constructor)
 {
   NdefMessage message;

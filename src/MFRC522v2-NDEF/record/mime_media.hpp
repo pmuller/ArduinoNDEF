@@ -1,5 +1,8 @@
 #include "../record.hpp"
 
+namespace ArduinoNDEF
+{
+
 /**
  * @brief NDEF MIME Media Record
  */
@@ -129,3 +132,5 @@ class NdefMimeMediaRecord : public NdefRecord
         NdefRecord(TNF_MIME_MEDIA, type, payload, is_message_begin, is_message_end, id){
         };
 };
+
+} // namespace ArduinoNDEF

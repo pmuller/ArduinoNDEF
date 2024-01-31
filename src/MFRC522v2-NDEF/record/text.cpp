@@ -1,5 +1,8 @@
 #include "text.hpp"
 
+namespace ArduinoNDEF
+{
+
 NdefTextRecord *NdefTextRecord::create(
     const char *text,
     const char *language_code,
@@ -70,4 +73,6 @@ NdefTextRecord *NdefTextRecord::create(
   if (id == nullptr)
     return nullptr;
   return create(text, language_code, is_message_begin, is_message_end, *id);
+}
+
 }

@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+namespace ArduinoNDEF
+{
+
 uint8_t *NdefRecord::encode() const
 {
   auto result = new uint8_t[get_encoded_size()];
@@ -249,3 +252,5 @@ uint32_t get_encoded_ndef_record_size(const uint8_t *data, uint32_t length)
 
   return index + type_length + id_length + payload_length;
 }
+
+} // namespace ArduinoNDEF

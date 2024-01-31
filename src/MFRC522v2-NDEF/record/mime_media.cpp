@@ -2,6 +2,9 @@
 
 #include <string.h>
 
+namespace ArduinoNDEF
+{
+
 NdefMimeMediaRecord *NdefMimeMediaRecord::create(
     const char *mime_type,
     const uint8_t *payload,
@@ -117,3 +120,5 @@ NdefMimeMediaRecord::create(const char *mime_type, const char *payload)
 {
   return create(mime_type, reinterpret_cast<const uint8_t *>(payload), strlen(payload));
 }
+
+} // namespace ArduinoNDEF

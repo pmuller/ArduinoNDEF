@@ -1,5 +1,8 @@
 #include "../record.hpp"
 
+namespace ArduinoNDEF
+{
+
 class NdefEmptyRecord : public NdefRecord
 {
   public:
@@ -45,3 +48,5 @@ class NdefEmptyRecord : public NdefRecord
     ) :
         NdefRecord(TNF_EMPTY, type, payload, is_message_begin, is_message_end, id){};
 };
+
+}

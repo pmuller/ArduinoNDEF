@@ -1,5 +1,8 @@
 #include "empty.hpp"
 
+namespace ArduinoNDEF
+{
+
 NdefEmptyRecord *NdefEmptyRecord::create(
     bool is_message_begin, bool is_message_end, const NdefRecordId &id
 )
@@ -34,3 +37,5 @@ NdefEmptyRecord *NdefEmptyRecord::create(bool is_message_begin, bool is_message_
 }
 
 NdefEmptyRecord *NdefEmptyRecord::create() { return create(false, false); }
+
+}

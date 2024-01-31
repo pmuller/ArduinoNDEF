@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 
+namespace ArduinoNDEF
+{
+
 /**
  * @brief NDEF URI payload builder
  * @ref NFCForum-TS-RTD_URI_1.0.pdf
@@ -71,3 +74,5 @@ class NdefUriPayload
     const uint8_t *_data;
     uint8_t _length;
 };
+
+} // namespace ArduinoNDEF

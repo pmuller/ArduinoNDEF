@@ -2,6 +2,9 @@
 
 #include "uri.hpp"
 
+namespace ArduinoNDEF
+{
+
 NdefUriRecord *NdefUriRecord::create(
     const char *uri, bool is_message_begin, bool is_message_end, const NdefRecordId &id
 )
@@ -43,3 +46,5 @@ NdefUriRecord *NdefUriRecord::create(const char *uri)
 {
   return create(uri, false, false);
 }
+
+} // namespace ArduinoNDEF

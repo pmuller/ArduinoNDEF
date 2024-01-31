@@ -1,5 +1,8 @@
 #include "../record.hpp"
 
+namespace ArduinoNDEF
+{
+
 /**
  * @brief NDEF URI Record
  */
@@ -58,3 +61,5 @@ class NdefUriRecord : public NdefRecord
         NdefRecord(TNF_WELL_KNOWN, type, payload, is_message_begin, is_message_end, id){
         };
 };
+
+} // namespace ArduinoNDEF

@@ -3,6 +3,8 @@
 #include <AUnitVerbose.h>
 #include <MFRC522v2-NDEF.h>
 
+using namespace ArduinoNDEF;
+
 test(constructor_empty)
 {
   NdefRecordField<uint8_t> field;

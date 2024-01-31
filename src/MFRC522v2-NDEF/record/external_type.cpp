@@ -3,6 +3,9 @@
 #define NDEF_RECORD_EXTERNAL_TYPE_PREFIX "urn:nfc:ext:"
 #define NDEF_RECORD_EXTERNAL_TYPE_PREFIX_LENGTH 12
 
+namespace ArduinoNDEF
+{
+
 NdefExternalTypeRecord *NdefExternalTypeRecord::create(
     const char *domain,
     const char *external_type,
@@ -171,3 +174,5 @@ NdefExternalTypeRecord *NdefExternalTypeRecord::create(
 {
   return create(domain, external_type, payload, false, false);
 }
+
+} // namespace ArduinoNDEF

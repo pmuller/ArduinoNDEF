@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <string.h>
 
+namespace ArduinoNDEF
+{
+
 /**
  * @brief A NDEF record field
  */
@@ -230,3 +233,5 @@ class NdefRecordType : public NdefRecordField<uint8_t>
       _ownership = OwnershipUnique;
     };
 };
+
+} // namespace ArduinoNDEF
