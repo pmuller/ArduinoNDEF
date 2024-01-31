@@ -10,17 +10,17 @@ namespace ArduinoNDEF
 /**
  * @brief NDEF Message
  */
-class NdefMessage
+class Message
 {
   public:
     /**
      * @brief Create a new NDEF Message
      */
-    NdefMessage();
+    Message();
     /**
      * @brief Destroy the NDEF Message
      */
-    ~NdefMessage();
+    ~Message();
 
     /**
      * @brief Add a record to the message
@@ -49,9 +49,9 @@ class NdefMessage
      *
      * @param data The data to decode
      * @param data_length The data length
-     * @return NdefMessage* The decoded NDEF message
+     * @return Message* The decoded NDEF message
      */
-    static NdefMessage *decode(const uint8_t *data, uint32_t length);
+    static Message *decode(const uint8_t *data, uint32_t length);
 
     /**
      * @brief Get the record count
@@ -72,7 +72,7 @@ class NdefMessage
     }
 
   private:
-    NdefMessage(Record::Record **records, uint8_t record_count) :
+    Message(Record::Record **records, uint8_t record_count) :
         records(records), record_count(record_count){};
     Record::Record **records;
     uint8_t record_count;

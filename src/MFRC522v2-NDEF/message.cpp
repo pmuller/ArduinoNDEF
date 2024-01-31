@@ -10,13 +10,13 @@
 namespace ArduinoNDEF
 {
 
-NdefMessage::NdefMessage()
+Message::Message()
 {
   records = nullptr;
   record_count = 0;
 }
 
-NdefMessage::~NdefMessage()
+Message::~Message()
 {
   for (uint8_t i = 0; i < record_count; i++)
     delete records[i];
@@ -24,11 +24,11 @@ NdefMessage::~NdefMessage()
   delete[] records;
 }
 
-int8_t NdefMessage::add_record(Record::Record *record)
+int8_t Message::add_record(Record::Record *record)
 {
   if (record == nullptr)
   {
-    PRINTLN(F("NdefMessage::add_record failed"));
+    PRINTLN(F("Message::add_record failed"));
     return NDEF_ERROR_RECORD_IS_NULL;
   }
 
@@ -36,7 +36,7 @@ int8_t NdefMessage::add_record(Record::Record *record)
 
   if (records == nullptr)
   {
-    PRINTLN(F("NdefMessage::add_record failed to allocate memory"));
+    PRINTLN(F("Message::add_record failed to allocate memory"));
     return NDEF_ERROR_MALLOC_FAILED;
   }
 
@@ -64,7 +64,7 @@ int8_t NdefMessage::add_record(Record::Record *record)
   return NDEF_SUCCESS;
 }
 
-uint32_t NdefMessage::get_encoded_size()
+uint32_t Message::get_encoded_size()
 {
   uint32_t result = 0;
 
@@ -74,14 +74,14 @@ uint32_t NdefMessage::get_encoded_size()
   return result;
 }
 
-uint8_t *NdefMessage::encode()
+uint8_t *Message::encode()
 {
   auto result = new uint8_t[get_encoded_size()];
   uint8_t *result_ptr = result;
 
   if (result == nullptr)
   {
-    PRINTLN(F("NdefMessage::encode failed to allocate memory"));
+    PRINTLN(F("Message::encode failed to allocate memory"));
     return nullptr;
   }
 
@@ -125,7 +125,7 @@ uint8_t count_ndef_message_records(const uint8_t *message, uint32_t length)
   return count;
 }
 
-NdefMessage *NdefMessage::decode(const uint8_t *data, uint32_t length)
+Message *Message::decode(const uint8_t *data, uint32_t length)
 {
   if (data == nullptr || length == 0)
     return nullptr;
@@ -142,7 +142,7 @@ NdefMessage *NdefMessage::decode(const uint8_t *data, uint32_t length)
 
     if (record == nullptr)
     {
-      PRINTLN(F("NdefMessage::decode failed"));
+      PRINTLN(F("Message::decode failed"));
       for (uint8_t i = 0; i < record_index; i++)
         delete records[i];
       delete records;
@@ -156,9 +156,9 @@ NdefMessage *NdefMessage::decode(const uint8_t *data, uint32_t length)
       break;
   }
 
-  return new NdefMessage(records, record_count);
+  return new Message(records, record_count);
 }
 
-uint8_t NdefMessage::get_record_count() { return record_count; }
+uint8_t Message::get_record_count() { return record_count; }
 
 } // namespace ArduinoNDEF

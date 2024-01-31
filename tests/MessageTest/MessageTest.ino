@@ -5,14 +5,14 @@
 
 test(message_constructor)
 {
-  ArduinoNDEF::NdefMessage message;
+  ArduinoNDEF::Message message;
   assertEqual(message.get_record_count(), 0);
   assertEqual(message.get_encoded_size(), static_cast<uint32_t>(0));
 }
 
 test(message_add_one_record)
 {
-  ArduinoNDEF::NdefMessage message;
+  ArduinoNDEF::Message message;
   assertEqual(message.add_record(ArduinoNDEF::Record::Empty::create()), NDEF_SUCCESS);
   assertEqual(message.get_record_count(), 1);
   assertEqual(message.get_encoded_size(), static_cast<uint32_t>(3));
@@ -26,7 +26,7 @@ test(message_add_one_record)
 
 test(message_add_three_records)
 {
-  ArduinoNDEF::NdefMessage message;
+  ArduinoNDEF::Message message;
   assertEqual(message.add_record(ArduinoNDEF::Record::Empty::create()), NDEF_SUCCESS);
   assertEqual(message.add_record(ArduinoNDEF::Record::Empty::create()), NDEF_SUCCESS);
   assertEqual(message.add_record(ArduinoNDEF::Record::Empty::create()), NDEF_SUCCESS);
@@ -50,7 +50,7 @@ test(message_add_three_records)
 
 test(message_add_mime_media_record)
 {
-  ArduinoNDEF::NdefMessage message;
+  ArduinoNDEF::Message message;
   assertEqual(
       message.add_record(ArduinoNDEF::Record::MimeMedia::create(
           "text/plain",
@@ -90,7 +90,7 @@ test(message_add_mime_media_record)
 
 test(message_add_uri_record)
 {
-  ArduinoNDEF::NdefMessage message;
+  ArduinoNDEF::Message message;
   assertEqual(
       message.add_record(ArduinoNDEF::Record::Uri::create("https://www.google.com")),
       NDEF_SUCCESS
@@ -123,7 +123,7 @@ test(message_add_uri_record)
 
 test(message_add_external_type_record)
 {
-  ArduinoNDEF::NdefMessage message;
+  ArduinoNDEF::Message message;
   assertEqual(
       message.add_record(ArduinoNDEF::Record::ExternalType::create(
           "com.example",
@@ -197,8 +197,7 @@ test(decode__1)
                                      // Payload length is 0
                                      0
   };
-  ArduinoNDEF::NdefMessage *message =
-      ArduinoNDEF::NdefMessage::decode(encoded_message, 3);
+  ArduinoNDEF::Message *message = ArduinoNDEF::Message::decode(encoded_message, 3);
   assertEqual(message->get_record_count(), static_cast<uint8_t>(1));
   assertEqual(message->get_encoded_size(), static_cast<uint32_t>(3));
   auto empty_record = ArduinoNDEF::Record::Empty::create(
@@ -243,8 +242,8 @@ test(decode__2)
                                      // Payload length is 0
                                      0
   };
-  ArduinoNDEF::NdefMessage *message =
-      ArduinoNDEF::NdefMessage::decode(encoded_message, sizeof(encoded_message));
+  ArduinoNDEF::Message *message =
+      ArduinoNDEF::Message::decode(encoded_message, sizeof(encoded_message));
   assertEqual(message->get_record_count(), static_cast<uint8_t>(2));
   assertEqual(message->get_encoded_size(), static_cast<uint32_t>(21));
   auto mime_record = ArduinoNDEF::Record::MimeMedia::create(
@@ -268,8 +267,8 @@ test(decode__3)
 {
   const uint8_t encoded_message[] =
       {0b10010000, 0, 0, 0b00010000, 0, 0, 0b01010000, 0, 0};
-  ArduinoNDEF::NdefMessage *message =
-      ArduinoNDEF::NdefMessage::decode(encoded_message, sizeof(encoded_message));
+  ArduinoNDEF::Message *message =
+      ArduinoNDEF::Message::decode(encoded_message, sizeof(encoded_message));
   assertEqual(message->get_record_count(), static_cast<uint8_t>(3));
   assertEqual(message->get_encoded_size(), static_cast<uint32_t>(9));
   auto empty_record_begin = ArduinoNDEF::Record::Empty::create(
