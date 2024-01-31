@@ -44,7 +44,7 @@ template <typename LENGTH> class NdefRecordField
         _length(0), _ownership(OwnershipShared)
     {
       // Empty data
-      if (data == nullptr || length == 0)
+      if (data == nullptr)
         return;
       // Create a NDEF record field by making a copy of data
       if (ownership == OwnershipCopy)
