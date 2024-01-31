@@ -13,7 +13,10 @@ test(message_constructor)
 test(message_add_one_record)
 {
   ArduinoNDEF::Message message;
-  assertEqual(message.add_record(ArduinoNDEF::Record::Empty::create()), NDEF_SUCCESS);
+  assertEqual(
+      message.add_record(ArduinoNDEF::Record::Empty::create()),
+      ArduinoNDEF::Error::Success
+  );
   assertEqual(message.record_count(), 1);
   assertEqual(message.get_encoded_size(), static_cast<uint32_t>(3));
   uint8_t *encoded = message.encode();
@@ -27,9 +30,18 @@ test(message_add_one_record)
 test(message_add_three_records)
 {
   ArduinoNDEF::Message message;
-  assertEqual(message.add_record(ArduinoNDEF::Record::Empty::create()), NDEF_SUCCESS);
-  assertEqual(message.add_record(ArduinoNDEF::Record::Empty::create()), NDEF_SUCCESS);
-  assertEqual(message.add_record(ArduinoNDEF::Record::Empty::create()), NDEF_SUCCESS);
+  assertEqual(
+      message.add_record(ArduinoNDEF::Record::Empty::create()),
+      ArduinoNDEF::Error::Success
+  );
+  assertEqual(
+      message.add_record(ArduinoNDEF::Record::Empty::create()),
+      ArduinoNDEF::Error::Success
+  );
+  assertEqual(
+      message.add_record(ArduinoNDEF::Record::Empty::create()),
+      ArduinoNDEF::Error::Success
+  );
   assertEqual(message.record_count(), 3);
   assertEqual(message.get_encoded_size(), static_cast<uint32_t>(9));
   uint8_t *encoded = message.encode();
@@ -57,7 +69,7 @@ test(message_add_mime_media_record)
           reinterpret_cast<const uint8_t *>("Hello"),
           5
       )),
-      NDEF_SUCCESS
+      ArduinoNDEF::Error::Success
   );
   assertEqual(message.record_count(), static_cast<uint8_t>(1));
   assertEqual(message.get_encoded_size(), static_cast<uint32_t>(18));
@@ -93,7 +105,7 @@ test(message_add_uri_record)
   ArduinoNDEF::Message message;
   assertEqual(
       message.add_record(ArduinoNDEF::Record::Uri::create("https://www.google.com")),
-      NDEF_SUCCESS
+      ArduinoNDEF::Error::Success
   );
   assertEqual(message.record_count(), static_cast<uint8_t>(1));
   assertEqual(message.get_encoded_size(), static_cast<uint32_t>(15));
@@ -131,7 +143,7 @@ test(message_add_external_type_record)
           reinterpret_cast<const uint8_t *>("Hello"),
           5
       )),
-      NDEF_SUCCESS
+      ArduinoNDEF::Error::Success
   );
   assertEqual(message.record_count(), static_cast<uint8_t>(1));
   assertEqual(message.get_encoded_size(), static_cast<uint32_t>(44));

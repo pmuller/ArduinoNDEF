@@ -1,6 +1,5 @@
 #include "record.hpp"
 
-#include "constants.hpp"
 #include "macros.hpp"
 
 #include <stdint.h>

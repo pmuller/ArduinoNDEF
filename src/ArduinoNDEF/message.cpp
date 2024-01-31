@@ -1,6 +1,5 @@
 #include "message.hpp"
 
-#include "constants.hpp"
 #include "macros.hpp"
 
 #include <stdint.h>
@@ -24,12 +23,12 @@ Message::~Message()
   delete[] _records;
 }
 
-int8_t Message::add_record(Record::Record *record)
+Error::Error Message::add_record(Record::Record *record)
 {
   if (record == nullptr)
   {
     PRINTLN(F("Message::add_record failed"));
-    return NDEF_ERROR_RECORD_IS_NULL;
+    return Error::NullRecord;
   }
 
   Record::Record **records = new Record::Record *[_record_count + 1];
@@ -37,7 +36,7 @@ int8_t Message::add_record(Record::Record *record)
   if (records == nullptr)
   {
     PRINTLN(F("Message::add_record failed to allocate memory"));
-    return NDEF_ERROR_MALLOC_FAILED;
+    return Error::OutOfMemory;
   }
 
   if (this->_records != nullptr)
@@ -61,7 +60,7 @@ int8_t Message::add_record(Record::Record *record)
 
   records[_record_count++] = record;
 
-  return NDEF_SUCCESS;
+  return Error::Success;
 }
 
 uint32_t Message::get_encoded_size()

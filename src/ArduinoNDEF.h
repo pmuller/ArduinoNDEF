@@ -1,4 +1,4 @@
-#include "ArduinoNDEF/constants.hpp"
+#include "ArduinoNDEF/errors.hpp"
 #include "ArduinoNDEF/message.hpp"
 #include "ArduinoNDEF/record.hpp"
 #include "ArduinoNDEF/record/empty.hpp"

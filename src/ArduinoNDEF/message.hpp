@@ -1,5 +1,6 @@
 #pragma once
 
+#include "errors.hpp"
 #include "record.hpp"
 
 #include <stdint.h>
@@ -28,7 +29,7 @@ class Message
      * @param record The record to add
      * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
      */
-    int8_t add_record(Record::Record *record);
+    Error::Error add_record(Record::Record *record);
 
     /**
      * @brief Get the size of the encoded NDEF message
