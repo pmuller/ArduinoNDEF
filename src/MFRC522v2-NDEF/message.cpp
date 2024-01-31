@@ -12,16 +12,16 @@ namespace ArduinoNDEF
 
 Message::Message()
 {
-  records = nullptr;
+  _records = nullptr;
   _record_count = 0;
 }
 
 Message::~Message()
 {
   for (uint8_t i = 0; i < _record_count; i++)
-    delete records[i];
+    delete _records[i];
 
-  delete[] records;
+  delete[] _records;
 }
 
 int8_t Message::add_record(Record::Record *record)
@@ -40,13 +40,13 @@ int8_t Message::add_record(Record::Record *record)
     return NDEF_ERROR_MALLOC_FAILED;
   }
 
-  if (this->records != nullptr)
+  if (this->_records != nullptr)
   {
-    memcpy(records, this->records, sizeof(Record::Record *) * _record_count);
-    delete[] this->records;
+    memcpy(records, this->_records, sizeof(Record::Record *) * _record_count);
+    delete[] this->_records;
   }
 
-  this->records = records;
+  this->_records = records;
 
   if (_record_count == 0)
   {
@@ -69,7 +69,7 @@ uint32_t Message::get_encoded_size()
   uint32_t result = 0;
 
   for (uint8_t i = 0; i < _record_count; i++)
-    result += records[i]->get_encoded_size();
+    result += _records[i]->get_encoded_size();
 
   return result;
 }
@@ -87,8 +87,8 @@ uint8_t *Message::encode()
 
   for (uint8_t i = 0; i < _record_count; i++)
   {
-    uint8_t *record_encoded = records[i]->encode();
-    uint32_t record_encoded_size = records[i]->get_encoded_size();
+    uint8_t *record_encoded = _records[i]->encode();
+    uint32_t record_encoded_size = _records[i]->get_encoded_size();
     memcpy(result_ptr, record_encoded, record_encoded_size);
     result_ptr += record_encoded_size;
     delete[] record_encoded;
