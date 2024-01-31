@@ -1,5 +1,5 @@
 EXTRA_CXXFLAGS := -g -fno-permissive
-ARDUINO_LIBS := AUnit MFRC522v2-NDEF
+ARDUINO_LIBS := AUnit ArduinoNDEF
 include ../../../EpoxyDuino/EpoxyDuino.mk
 
 valgrind_run:

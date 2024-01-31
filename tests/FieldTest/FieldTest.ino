@@ -1,7 +1,7 @@
 #line 2 "FieldTest.ino"
 
 #include <AUnitVerbose.h>
-#include <MFRC522v2-NDEF.h>
+#include <ArduinoNDEF.h>
 
 test(constructor_empty)
 {
