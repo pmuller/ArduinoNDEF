@@ -1,6 +1,9 @@
 #pragma once
 
 #include "field.hpp"
+#include "field/id.hpp"
+#include "field/payload.hpp"
+#include "field/type.hpp"
 
 // Message Begin flag (MB)
 #define NDEF_RECORD_HEADER_MB_FLAG_MASK 0b10000000
