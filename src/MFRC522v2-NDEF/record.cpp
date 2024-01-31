@@ -125,21 +125,27 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
   }
 
   // Type
-  auto type_data = new uint8_t[type_length];
-  if (type_data == nullptr)
-    return nullptr;
-  memcpy(type_data, data_ptr, type_length);
-  data_ptr += type_length;
-  auto type =
-      new NdefRecordType(type_data, type_length, NdefRecordType::OwnershipUnique);
-  if (type == nullptr)
+  NdefRecordType *type = nullptr;
+  if (type_length > 0)
   {
-    delete type_data;
-    return nullptr;
+    auto type_data = new uint8_t[type_length];
+    if (type_data == nullptr)
+      return nullptr;
+    memcpy(type_data, data_ptr, type_length);
+    data_ptr += type_length;
+    type = new NdefRecordType(type_data, type_length, NdefRecordType::OwnershipUnique);
+    if (type == nullptr)
+    {
+      delete type_data;
+      return nullptr;
+    }
   }
+  else
+    type = new NdefRecordType();
 
   // ID
   uint8_t *id_data = nullptr;
+  NdefRecordId *id = nullptr;
   if (id_length > 0)
   {
     id_data = new uint8_t[id_length];
@@ -150,8 +156,10 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
     }
     memcpy(id_data, data_ptr, id_length);
     data_ptr += id_length;
+    id = new NdefRecordId(id_data, id_length, NdefRecordId::OwnershipUnique);
   }
-  auto id = new NdefRecordId(id_data, id_length, NdefRecordId::OwnershipUnique);
+  else
+    id = new NdefRecordId();
   if (id == nullptr)
   {
     delete type;
@@ -160,20 +168,27 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
   }
 
   // Payload
-  uint8_t *payload_data = new uint8_t[payload_length];
-  if (payload_data == nullptr)
+  uint8_t *payload_data = nullptr;
+  NdefRecordPayload *payload = nullptr;
+  if (payload_length > 0)
   {
-    delete type;
-    delete id;
-    return nullptr;
+    payload_data = new uint8_t[payload_length];
+    if (payload_data == nullptr)
+    {
+      delete type;
+      delete id;
+      return nullptr;
+    }
+    memcpy(payload_data, data_ptr, payload_length);
+    data_ptr += payload_length;
+    payload = new NdefRecordPayload(
+        payload_data,
+        payload_length,
+        NdefRecordPayload::OwnershipUnique
+    );
   }
-  memcpy(payload_data, data_ptr, payload_length);
-  data_ptr += payload_length;
-  auto payload = new NdefRecordPayload(
-      payload_data,
-      payload_length,
-      NdefRecordPayload::OwnershipUnique
-  );
+  else
+    payload = new NdefRecordPayload();
   if (payload == nullptr)
   {
     delete type;
