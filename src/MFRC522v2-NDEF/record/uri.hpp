@@ -8,7 +8,7 @@ namespace Record
 /**
  * @brief NDEF URI Record
  */
-class Uri : public NdefRecord
+class Uri : public Record
 {
   public:
     /**
@@ -54,8 +54,7 @@ class Uri : public NdefRecord
         bool is_message_begin,
         bool is_message_end,
         const Field::Id &id) :
-        NdefRecord(TNF_WELL_KNOWN, type, payload, is_message_begin, is_message_end, id){
-        };
+        Record(TNF_WELL_KNOWN, type, payload, is_message_begin, is_message_end, id){};
 };
 
 } // namespace Record

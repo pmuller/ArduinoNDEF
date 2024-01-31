@@ -5,7 +5,7 @@ namespace ArduinoNDEF
 namespace Record
 {
 
-class Empty : public NdefRecord
+class Empty : public Record
 {
   public:
     /**
@@ -48,7 +48,7 @@ class Empty : public NdefRecord
         bool is_message_end,
         const Field::Id &id
     ) :
-        NdefRecord(TNF_EMPTY, type, payload, is_message_begin, is_message_end, id){};
+        Record(TNF_EMPTY, type, payload, is_message_begin, is_message_end, id){};
 };
 
 } // namespace Record

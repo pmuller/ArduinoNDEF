@@ -27,7 +27,7 @@ namespace Record
  * and exchange data. This class provides methods to create, encode, decode, and
  * manipulate NDEF records.
  */
-class NdefRecord
+class Record
 {
   public:
     /**
@@ -70,7 +70,7 @@ class NdefRecord
      * @param is_message_end Message End flag (ME)
      * @param id The ID
      */
-    NdefRecord(
+    Record(
         TNF type_name_format,
         const Field::Type &type,
         const Field::Payload &payload,
@@ -85,7 +85,7 @@ class NdefRecord
     /**
      * @brief Destroy the NDEF record
      */
-    ~NdefRecord()
+    ~Record()
     {
       delete &_type;
       delete &_id;
@@ -113,16 +113,16 @@ class NdefRecord
      * @return true The NDEF records are equal
      * @return false The NDEF records are not equal
      */
-    bool operator==(const NdefRecord &other) const;
+    bool operator==(const Record &other) const;
 
     /**
      * @brief Decode an encoded NDEF record
      *
      * @param data Encoded NDEF record
      * @param data_length The data length
-     * @return NdefRecord* The decoded NDEF record
+     * @return Record* The decoded NDEF record
      */
-    static NdefRecord *decode(const uint8_t &data, uint32_t data_length);
+    static Record *decode(const uint8_t &data, uint32_t data_length);
 
     const Field::Type &type() const { return _type; };
     const Field::Id &id() const { return _id; };

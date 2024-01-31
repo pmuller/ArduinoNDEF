@@ -8,7 +8,7 @@ namespace Record
 /**
  * @brief NDEF External Type Record
  */
-class ExternalType : public NdefRecord
+class ExternalType : public Record
 {
   public:
     /**
@@ -153,9 +153,8 @@ class ExternalType : public NdefRecord
         bool is_message_end,
         const Field::Id &id
     ) :
-        NdefRecord(
-            TNF_EXTERNAL_TYPE, type, payload, is_message_begin, is_message_end, id
-        ){};
+        Record(TNF_EXTERNAL_TYPE, type, payload, is_message_begin, is_message_end, id){
+        };
 };
 
 } // namespace Record

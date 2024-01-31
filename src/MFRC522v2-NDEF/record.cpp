@@ -12,7 +12,7 @@ namespace ArduinoNDEF
 namespace Record
 {
 
-uint8_t *NdefRecord::encode() const
+uint8_t *Record::encode() const
 {
   auto result = new uint8_t[get_encoded_size()];
   auto result_ptr = result;
@@ -57,7 +57,7 @@ uint8_t *NdefRecord::encode() const
   return result;
 }
 
-uint32_t NdefRecord::get_encoded_size() const
+uint32_t Record::get_encoded_size() const
 {
   return 2                                 // TNF + flags + type length
        + (_payload.length() > 255 ? 4 : 1) // payload length size
@@ -69,7 +69,7 @@ uint32_t NdefRecord::get_encoded_size() const
   minimum_length += size;                                                              \
   if (data_length < minimum_length)                                                    \
   {                                                                                    \
-    PRINT(F("NdefRecord::decode failed: data_length < minimum_length: "));             \
+    PRINT(F("Record::decode failed: data_length < minimum_length: "));                 \
     PRINT(data_length);                                                                \
     PRINT(F(" < "));                                                                   \
     PRINT(minimum_length);                                                             \
@@ -77,7 +77,7 @@ uint32_t NdefRecord::get_encoded_size() const
     return nullptr;                                                                    \
   }
 
-NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
+Record *Record::decode(const uint8_t &data, uint32_t data_length)
 {
   const uint8_t *data_ptr = &data;
   uint8_t minimum_length = 0;
@@ -87,7 +87,7 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
 
   if (tnf_flags & NDEF_RECORD_HEADER_CF_FLAG_MASK)
   {
-    PRINTLN(F("NdefRecord::decode failed: chunked record not supported"));
+    PRINTLN(F("Record::decode failed: chunked record not supported"));
     return nullptr;
   }
 
@@ -202,7 +202,7 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
     return nullptr;
   }
 
-  return new NdefRecord(
+  return new Record(
       type_name_format,
       *type,
       *payload,
@@ -212,7 +212,7 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
   );
 }
 
-bool NdefRecord::operator==(const NdefRecord &other) const
+bool Record::operator==(const Record &other) const
 {
   return type_name_format == other.type_name_format && _type == other._type &&
          _payload == other._payload && is_message_begin == other.is_message_begin &&

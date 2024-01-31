@@ -8,7 +8,7 @@ namespace Record
 /**
  * @brief NDEF Text Record
  */
-class Text : public NdefRecord
+class Text : public Record
 {
   public:
     /**
@@ -70,8 +70,7 @@ class Text : public NdefRecord
         bool is_message_end,
         const Field::Id &id
     ) :
-        NdefRecord(TNF_WELL_KNOWN, type, payload, is_message_begin, is_message_end, id){
-        };
+        Record(TNF_WELL_KNOWN, type, payload, is_message_begin, is_message_end, id){};
 };
 
 } // namespace Record

@@ -8,7 +8,7 @@ namespace Record
 /**
  * @brief NDEF MIME Media Record
  */
-class MimeMedia : public NdefRecord
+class MimeMedia : public Record
 {
   public:
     /**
@@ -131,8 +131,7 @@ class MimeMedia : public NdefRecord
         bool is_message_end,
         const Field::Id &id
     ) :
-        NdefRecord(TNF_MIME_MEDIA, type, payload, is_message_begin, is_message_end, id){
-        };
+        Record(TNF_MIME_MEDIA, type, payload, is_message_begin, is_message_end, id){};
 };
 
 } // namespace Record

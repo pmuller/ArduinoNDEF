@@ -24,7 +24,7 @@ NdefMessage::~NdefMessage()
   delete[] records;
 }
 
-int8_t NdefMessage::add_record(Record::NdefRecord *record)
+int8_t NdefMessage::add_record(Record::Record *record)
 {
   if (record == nullptr)
   {
@@ -32,7 +32,7 @@ int8_t NdefMessage::add_record(Record::NdefRecord *record)
     return NDEF_ERROR_RECORD_IS_NULL;
   }
 
-  Record::NdefRecord **records = new Record::NdefRecord *[record_count + 1];
+  Record::Record **records = new Record::Record *[record_count + 1];
 
   if (records == nullptr)
   {
@@ -42,7 +42,7 @@ int8_t NdefMessage::add_record(Record::NdefRecord *record)
 
   if (this->records != nullptr)
   {
-    memcpy(records, this->records, sizeof(Record::NdefRecord *) * record_count);
+    memcpy(records, this->records, sizeof(Record::Record *) * record_count);
     delete[] this->records;
   }
 
@@ -132,13 +132,13 @@ NdefMessage *NdefMessage::decode(const uint8_t *data, uint32_t length)
 
   auto record_index = 0;
   auto record_count = count_ndef_message_records(data, length);
-  auto records = new Record::NdefRecord *[record_count];
+  auto records = new Record::Record *[record_count];
   auto data_ptr = data;
   auto data_end = data_ptr + length;
 
   while (data_ptr < data_end)
   {
-    auto record = Record::NdefRecord::decode(*data_ptr, data_end - data_ptr);
+    auto record = Record::Record::decode(*data_ptr, data_end - data_ptr);
 
     if (record == nullptr)
     {

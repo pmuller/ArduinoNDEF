@@ -28,7 +28,7 @@ class NdefMessage
      * @param record The record to add
      * @return int8_t NDEF_SUCCESS or NDEF_ERROR_MALLOC_FAILED
      */
-    int8_t add_record(Record::NdefRecord *record);
+    int8_t add_record(Record::Record *record);
 
     /**
      * @brief Get the size of the encoded NDEF message
@@ -64,17 +64,17 @@ class NdefMessage
      * @brief Get the record at the given index
      *
      * @param index The index of the record
-     * @return NdefRecord* The record
+     * @return Record* The record
      */
-    const Record::NdefRecord *record(uint8_t index) const
+    const Record::Record *record(uint8_t index) const
     {
       return index < record_count ? records[index] : nullptr;
     }
 
   private:
-    NdefMessage(Record::NdefRecord **records, uint8_t record_count) :
+    NdefMessage(Record::Record **records, uint8_t record_count) :
         records(records), record_count(record_count){};
-    Record::NdefRecord **records;
+    Record::Record **records;
     uint8_t record_count;
 };
 
