@@ -46,11 +46,9 @@ class NdefMessage
      *
      * @param data The data to decode
      * @param data_length The data length
-     * @return int8_t NDEF_SUCCESS, NDEF_ERROR_MALLOC_FAILED,
-     * NDEF_ERROR_INVALID_RECORD_COUNT, NDEF_ERROR_INVALID_RECORD_LENGTH or
-     * NDEF_ERROR_CHUNK_NOT_SUPPORTED
+     * @return NdefMessage* The decoded NDEF message
      */
-    int8_t decode(const uint8_t &data, uint32_t data_length);
+    static NdefMessage *decode(const uint8_t *data, uint32_t length);
 
     /**
      * @brief Get the record count
@@ -71,6 +69,10 @@ class NdefMessage
     }
 
   private:
+    NdefMessage(NdefRecord **records, uint8_t record_count) :
+        records(records), record_count(record_count){};
     NdefRecord **records;
     uint8_t record_count;
 };
+
+uint8_t count_ndef_message_records(const uint8_t *message, uint32_t size);

@@ -213,3 +213,39 @@ bool NdefRecord::operator==(const NdefRecord &other) const
          _payload == other._payload && is_message_begin == other.is_message_begin &&
          is_message_end == other.is_message_end && _id == other._id;
 }
+
+#define NDEF_EMPTY_RECORD_SIZE 3
+
+uint32_t get_encoded_ndef_record_size(const uint8_t *data, uint32_t length)
+{
+  if (data == nullptr)
+    return 0;
+
+  uint32_t index = 0;
+  auto remaining = length;
+
+  if (remaining < NDEF_EMPTY_RECORD_SIZE)
+    return 0;
+
+  uint8_t tnf_flags = data[index++];
+  uint8_t type_length = data[index++];
+  remaining -= 2;
+
+  // Payload length: can be 1 or 4 bytes depending on the SR flag
+  uint8_t payload_length_size = tnf_flags & NDEF_RECORD_HEADER_SR_FLAG_MASK ? 1 : 4;
+  if (remaining < payload_length_size)
+    return 0;
+  uint32_t payload_length = 0;
+  for (uint8_t i = 0; i < payload_length_size; i++)
+    payload_length = (payload_length << 8) | data[index++];
+  if (remaining < payload_length_size + payload_length)
+    return 0;
+  remaining -= payload_length_size + payload_length;
+
+  // ID field is optional
+  uint8_t id_length = tnf_flags & NDEF_RECORD_HEADER_IL_FLAG_MASK ? data[index++] : 0;
+  if (remaining < id_length)
+    return 0;
+
+  return index + type_length + id_length + payload_length;
+}

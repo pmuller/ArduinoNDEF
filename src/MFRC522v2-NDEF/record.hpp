@@ -128,3 +128,12 @@ class NdefRecord
     const NdefRecordId &_id;
     const NdefRecordPayload &_payload;
 };
+
+/**
+ * @brief Get the size of the encoded NDEF record
+ *
+ * This function is used to calculate the size of the encoded NDEF record without
+ * decoding it, so we can allocate the right amount of memory to store the encoded NDEF
+ * record.
+ */
+uint32_t get_encoded_ndef_record_size(const uint8_t *data, uint32_t length);

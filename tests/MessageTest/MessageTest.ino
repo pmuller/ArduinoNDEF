@@ -186,6 +186,147 @@ test(message_add_external_type_record)
   delete[] encoded;
 }
 
+test(decode__1)
+{
+  const uint8_t encoded_message[] = {// MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x00 (empty)
+                                     0b11010000,
+                                     // Type length is 0
+                                     0,
+                                     // Payload length is 0
+                                     0
+  };
+  NdefMessage *message = NdefMessage::decode(encoded_message, 3);
+  assertEqual(message->get_record_count(), (uint8_t)1);
+  assertEqual(message->get_encoded_size(), (uint32_t)3);
+  auto empty_record =
+      NdefEmptyRecord::create(/* is_message_begin */ true, /* is_message_end */ true);
+  assertTrue(*message->record(0) == *empty_record);
+  delete message;
+  delete empty_record;
+}
+
+test(decode__2)
+{
+  const uint8_t encoded_message[] = {// MB=1, ME=0, CF=0, SR=1, IL=0, TNF=0x02 (MIME)
+                                     0b10010010,
+                                     // Type length is 10
+                                     10,
+                                     // Payload length is 5
+                                     5,
+                                     // Type is "text/plain"
+                                     't',
+                                     'e',
+                                     'x',
+                                     't',
+                                     '/',
+                                     'p',
+                                     'l',
+                                     'a',
+                                     'i',
+                                     'n',
+                                     // Payload is "Hello"
+                                     'H',
+                                     'e',
+                                     'l',
+                                     'l',
+                                     'o',
+                                     // 2nd message is empty
+                                     // MB=0, ME=1, CF=0, SR=1, IL=0, TNF=0x00 (empty)
+                                     0b01010000,
+                                     // Type length is 0
+                                     0,
+                                     // Payload length is 0
+                                     0
+  };
+  NdefMessage *message = NdefMessage::decode(encoded_message, sizeof(encoded_message));
+  assertEqual(message->get_record_count(), (uint8_t)2);
+  assertEqual(message->get_encoded_size(), (uint32_t)21);
+  auto mime_record = NdefMimeMediaRecord::create(
+      "text/plain",
+      "Hello",
+      /* is_message_begin */ true,
+      /* is_message_end */ false
+  );
+  assertTrue(*message->record(0) == *mime_record);
+  auto empty_record =
+      NdefEmptyRecord::create(/* is_message_begin */ false, /* is_message_end */ true);
+  assertTrue(*message->record(1) == *empty_record);
+  delete message;
+  delete mime_record;
+  delete empty_record;
+}
+
+test(decode__3)
+{
+  const uint8_t encoded_message[] =
+      {0b10010000, 0, 0, 0b00010000, 0, 0, 0b01010000, 0, 0};
+  NdefMessage *message = NdefMessage::decode(encoded_message, sizeof(encoded_message));
+  assertEqual(message->get_record_count(), (uint8_t)3);
+  assertEqual(message->get_encoded_size(), (uint32_t)9);
+  auto empty_record_begin =
+      NdefEmptyRecord::create(/* is_message_begin */ true, /* is_message_end */ false);
+  auto empty_record_2nd =
+      NdefEmptyRecord::create(/* is_message_begin */ false, /* is_message_end */ false);
+  auto empty_record_end =
+      NdefEmptyRecord::create(/* is_message_begin */ false, /* is_message_end */ true);
+  assertTrue(*message->record(0) == *empty_record_begin);
+  assertTrue(*message->record(1) == *empty_record_2nd);
+  assertTrue(*message->record(2) == *empty_record_end);
+  delete message;
+  delete empty_record_begin;
+  delete empty_record_2nd;
+  delete empty_record_end;
+}
+
+test(count_ndef_message_records__2)
+{
+  const uint8_t encoded_message[] = {// MB=1, ME=0, CF=0, SR=1, IL=0, TNF=0x02 (MIME)
+                                     0b10010010,
+                                     // Type length is 10
+                                     10,
+                                     // Payload length is 5
+                                     5,
+                                     // Type is "text/plain"
+                                     't',
+                                     'e',
+                                     'x',
+                                     't',
+                                     '/',
+                                     'p',
+                                     'l',
+                                     'a',
+                                     'i',
+                                     'n',
+                                     // Payload is "Hello"
+                                     'H',
+                                     'e',
+                                     'l',
+                                     'l',
+                                     'o',
+                                     // 2nd message is empty
+                                     // MB=0, ME=1, CF=0, SR=1, IL=0, TNF=0x00 (empty)
+                                     0b01010000,
+                                     // Type length is 0
+                                     0,
+                                     // Payload length is 0
+                                     0
+  };
+  assertEqual(
+      count_ndef_message_records(encoded_message, sizeof(encoded_message)),
+      (uint8_t)2
+  );
+}
+
+test(count_ndef_message_records__3_empty)
+{
+  const uint8_t encoded_message[] =
+      {0b10010000, 0, 0, 0b00010000, 0, 0, 0b01010000, 0, 0};
+  assertEqual(
+      count_ndef_message_records(encoded_message, sizeof(encoded_message)),
+      (uint8_t)3
+  );
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)

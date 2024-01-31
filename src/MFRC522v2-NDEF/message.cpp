@@ -94,35 +94,66 @@ uint8_t *NdefMessage::encode()
   return result;
 }
 
-int8_t NdefMessage::decode(const uint8_t &data, uint32_t data_length)
+uint8_t count_ndef_message_records(const uint8_t *message, uint32_t length)
 {
-  const uint8_t *data_ptr = &data;
-  const uint8_t *data_end = &data + data_length;
-  bool found_last_message = false;
+  if (message == nullptr || length == 0)
+    return 0;
 
-  while (data_ptr < data_end && !found_last_message)
+  uint8_t count = 0;
+  uint32_t index = 0;
+  uint32_t record_size;
+
+  while (index < length)
+  {
+    // Get current record size
+    record_size = get_encoded_ndef_record_size(&message[index], length - index);
+    // Stop if current record size is 0 (probably invalid)
+    if (record_size == 0)
+      break;
+    // Increment record count
+    count++;
+    // Stop on last record
+    if (message[index] & NDEF_RECORD_HEADER_ME_FLAG_MASK)
+      break;
+    // Increment index by record size
+    index += record_size;
+  }
+
+  return count;
+}
+
+NdefMessage *NdefMessage::decode(const uint8_t *data, uint32_t length)
+{
+  if (data == nullptr || length == 0)
+    return nullptr;
+
+  auto record_index = 0;
+  auto record_count = count_ndef_message_records(data, length);
+  auto records = new NdefRecord *[record_count];
+  auto data_ptr = data;
+  auto data_end = data_ptr + length;
+
+  while (data_ptr < data_end)
   {
     auto record = NdefRecord::decode(*data_ptr, data_end - data_ptr);
 
     if (record == nullptr)
     {
       PRINTLN(F("NdefMessage::decode failed"));
-      return -1;
-    }
-
-    found_last_message = record->is_message_end;
-
-    int8_t error = add_record(record);
-    if (error != NDEF_SUCCESS)
-    {
-      delete record;
-      return error;
+      for (uint8_t i = 0; i < record_index; i++)
+        delete records[i];
+      delete records;
+      return nullptr;
     }
 
     data_ptr += record->get_encoded_size();
+    records[record_index++] = record;
+
+    if (record->is_message_end)
+      break;
   }
 
-  return NDEF_SUCCESS;
+  return new NdefMessage(records, record_count);
 }
 
 uint8_t NdefMessage::get_record_count() { return record_count; }

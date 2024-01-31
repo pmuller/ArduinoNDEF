@@ -267,6 +267,52 @@ test(create_external_type_record)
   delete record;
 }
 
+test(get_encoded_ndef_record_size__invalid)
+{
+  const uint8_t encoded[] = {0, 0, 0, 0};
+  assertEqual(get_encoded_ndef_record_size(nullptr, 42), (uint32_t)0);
+  assertEqual(get_encoded_ndef_record_size(encoded, 0), (uint32_t)0);
+  assertEqual(get_encoded_ndef_record_size(encoded, 1), (uint32_t)0);
+  assertEqual(get_encoded_ndef_record_size(encoded, 2), (uint32_t)0);
+  assertEqual(get_encoded_ndef_record_size(encoded, 3), (uint32_t)0);
+  assertEqual(get_encoded_ndef_record_size(encoded, 4), (uint32_t)0);
+}
+
+test(get_encoded_ndef_record_size__empty)
+{
+  const uint8_t encoded[] = {0b00010000, 0, 0};
+  assertEqual(get_encoded_ndef_record_size(encoded, 3), (uint32_t)3);
+  // Ensure additional bytes are ignored
+  assertEqual(get_encoded_ndef_record_size(encoded, 6), (uint32_t)3);
+}
+
+test(get_encoded_ndef_record_size__uri)
+{
+  const uint8_t encoded[] = {
+      0b11010001,              // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x01
+      1,                       // Type length is 1
+      13,                      // Payload length is 13
+      NdefRecordType::RTD_URI, // Type is RTD_URI
+      0x04,                    // URI prefix is https://
+      'h',
+      'a',
+      'c',
+      'k',
+      'a',
+      'd',
+      'a',
+      'y',
+      '.',
+      'c',
+      'o',
+      'm'
+  };
+  assertEqual(get_encoded_ndef_record_size(encoded, 17), (uint32_t)17);
+  // Ensure additional bytes are ignored and we don't touch non allocated memory
+  // (valgrind will make this fail if we do)
+  assertEqual(get_encoded_ndef_record_size(encoded, 42), (uint32_t)17);
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)
