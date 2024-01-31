@@ -3,12 +3,10 @@
 #include <AUnitVerbose.h>
 #include <MFRC522v2-NDEF/uri.hpp>
 
-using namespace ArduinoNDEF;
-
 // NFCForum-TS-RTD_URI_1.0.pdf - A.1
 test(build_ndef_uri_payload__simple)
 {
-  NdefUriPayload payload("http://www.nfc.com");
+  ArduinoNDEF::NdefUriPayload payload("http://www.nfc.com");
   assertEqual(payload.length(), 8);
   assertEqual(payload.data()[0], 0x01); // http://www.
   assertEqual(payload.data()[1], static_cast<uint8_t>('n'));
@@ -23,7 +21,7 @@ test(build_ndef_uri_payload__simple)
 // NFCForum-TS-RTD_URI_1.0.pdf - A.2
 test(build_ndef_uri_payload__phone)
 {
-  NdefUriPayload payload("tel:+35891234567");
+  ArduinoNDEF::NdefUriPayload payload("tel:+35891234567");
   assertEqual(payload.length(), 13);
   assertEqual(payload.data()[0], 0x05); // tel:
   assertEqual(payload.data()[1], static_cast<uint8_t>('+'));
@@ -43,7 +41,7 @@ test(build_ndef_uri_payload__phone)
 // NFCForum-TS-RTD_URI_1.0.pdf - A.3
 test(build_ndef_uri_payload__proprietary)
 {
-  NdefUriPayload payload("mms://example.com/download.wmv");
+  ArduinoNDEF::NdefUriPayload payload("mms://example.com/download.wmv");
   assertEqual(payload.length(), 31);
   assertEqual(payload.data()[0], 0x00); // No abbreviation
   assertEqual(payload.data()[1], static_cast<uint8_t>('m'));
@@ -81,7 +79,7 @@ test(build_ndef_uri_payload__proprietary)
 test(build_uri_from_ndef_uri_payload__simple)
 {
   const uint8_t *data = new uint8_t[8]{0x01, 'n', 'f', 'c', '.', 'c', 'o', 'm'};
-  const char *uri = NdefUriPayload(data, 8).uri();
+  const char *uri = ArduinoNDEF::NdefUriPayload(data, 8).uri();
   assertEqual(uri, "http://www.nfc.com");
   delete[] uri;
 }
@@ -90,7 +88,7 @@ test(build_uri_from_ndef_uri_payload__phone)
 {
   const uint8_t *data =
       new uint8_t[13]{0x05, '+', '3', '5', '8', '9', '1', '2', '3', '4', '5', '6', '7'};
-  const char *uri = NdefUriPayload(data, 13).uri();
+  const char *uri = ArduinoNDEF::NdefUriPayload(data, 13).uri();
   assertEqual(uri, "tel:+35891234567");
   delete[] uri;
 }
@@ -101,7 +99,7 @@ test(build_uri_from_ndef_uri_payload__proprietary)
       new uint8_t[31]{0x00, 'm', 'm', 's', ':', '/', '/', 'e', 'x', 'a', 'm',
                       'p',  'l', 'e', '.', 'c', 'o', 'm', '/', 'd', 'o', 'w',
                       'n',  'l', 'o', 'a', 'd', '.', 'w', 'm', 'v'};
-  const char *uri = NdefUriPayload(data, 31).uri();
+  const char *uri = ArduinoNDEF::NdefUriPayload(data, 31).uri();
   assertEqual(uri, "mms://example.com/download.wmv");
   delete[] uri;
 }
