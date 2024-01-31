@@ -26,7 +26,7 @@ class Text : public NdefRecord
         const char *language_code,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     );
     /**
      * @brief Create a new NDEF Text Record
@@ -45,7 +45,7 @@ class Text : public NdefRecord
      * @return Text* The NDEF Text Record
      */
     static Text *
-    create(const char *text, const char *language_code, const NdefRecordId &id);
+    create(const char *text, const char *language_code, const Field::Id &id);
     /**
      * @brief Create a new NDEF Text Record
      *
@@ -64,11 +64,11 @@ class Text : public NdefRecord
 
   private:
     Text(
-        const NdefRecordType &type,
-        const NdefRecordPayload &payload,
+        const Field::Type &type,
+        const Field::Payload &payload,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     ) :
         NdefRecord(TNF_WELL_KNOWN, type, payload, is_message_begin, is_message_end, id){
         };

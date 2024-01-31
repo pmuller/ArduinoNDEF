@@ -128,7 +128,7 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
   }
 
   // Type
-  NdefRecordType *type = nullptr;
+  Field::Type *type = nullptr;
   if (type_length > 0)
   {
     auto type_data = new uint8_t[type_length];
@@ -136,7 +136,7 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
       return nullptr;
     memcpy(type_data, data_ptr, type_length);
     data_ptr += type_length;
-    type = new NdefRecordType(type_data, type_length, NdefRecordType::OwnershipUnique);
+    type = new Field::Type(type_data, type_length, Field::Type::OwnershipUnique);
     if (type == nullptr)
     {
       delete type_data;
@@ -144,11 +144,11 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
     }
   }
   else
-    type = new NdefRecordType();
+    type = new Field::Type();
 
   // ID
   uint8_t *id_data = nullptr;
-  NdefRecordId *id = nullptr;
+  Field::Id *id = nullptr;
   if (id_length > 0)
   {
     id_data = new uint8_t[id_length];
@@ -159,10 +159,10 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
     }
     memcpy(id_data, data_ptr, id_length);
     data_ptr += id_length;
-    id = new NdefRecordId(id_data, id_length, NdefRecordId::OwnershipUnique);
+    id = new Field::Id(id_data, id_length, Field::Id::OwnershipUnique);
   }
   else
-    id = new NdefRecordId();
+    id = new Field::Id();
   if (id == nullptr)
   {
     delete type;
@@ -172,7 +172,7 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
 
   // Payload
   uint8_t *payload_data = nullptr;
-  NdefRecordPayload *payload = nullptr;
+  Field::Payload *payload = nullptr;
   if (payload_length > 0)
   {
     payload_data = new uint8_t[payload_length];
@@ -184,14 +184,14 @@ NdefRecord *NdefRecord::decode(const uint8_t &data, uint32_t data_length)
     }
     memcpy(payload_data, data_ptr, payload_length);
     data_ptr += payload_length;
-    payload = new NdefRecordPayload(
+    payload = new Field::Payload(
         payload_data,
         payload_length,
-        NdefRecordPayload::OwnershipUnique
+        Field::Payload::OwnershipUnique
     );
   }
   else
-    payload = new NdefRecordPayload();
+    payload = new Field::Payload();
   if (payload == nullptr)
   {
     delete type;

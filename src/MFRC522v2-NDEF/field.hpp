@@ -5,11 +5,13 @@
 
 namespace ArduinoNDEF
 {
+namespace Field
+{
 
 /**
  * @brief A NDEF record field
  */
-template <typename LENGTH> class NdefRecordField
+template <typename LENGTH> class Field
 {
   public:
     /**
@@ -31,7 +33,7 @@ template <typename LENGTH> class NdefRecordField
     /**
      * @brief Create an empty NDEF record field
      */
-    NdefRecordField() : _data(nullptr), _length(0), _ownership(OwnershipShared){};
+    Field() : _data(nullptr), _length(0), _ownership(OwnershipShared){};
 
     /**
      * @brief Create a NDEF record field
@@ -40,11 +42,8 @@ template <typename LENGTH> class NdefRecordField
      * @param length The data length
      * @param ownership The ownership of the data
      */
-    NdefRecordField(
-        const uint8_t *data, LENGTH length, Ownership ownership = OwnershipCopy
-    ) :
-        _data(nullptr),
-        _length(0), _ownership(OwnershipShared)
+    Field(const uint8_t *data, LENGTH length, Ownership ownership = OwnershipCopy) :
+        _data(nullptr), _length(0), _ownership(OwnershipShared)
     {
       // Empty data
       if (data == nullptr)
@@ -73,21 +72,16 @@ template <typename LENGTH> class NdefRecordField
      * @param data The string
      * @param ownership The ownership of the data
      */
-    NdefRecordField(const char *string, Ownership ownership = OwnershipShared) :
-        NdefRecordField(
-            reinterpret_cast<const uint8_t *>(string), strlen(string), ownership
-        ){};
+    Field(const char *string, Ownership ownership = OwnershipShared) :
+        Field(reinterpret_cast<const uint8_t *>(string), strlen(string), ownership){};
 
     /**
      * @brief Copy constructor
      *
      * @param other The other NDEF record field
      */
-    NdefRecordField(
-        const NdefRecordField &other, Ownership ownership = OwnershipShared
-    ) :
-        _data(nullptr),
-        _length(0), _ownership(OwnershipShared)
+    Field(const Field &other, Ownership ownership = OwnershipShared) :
+        _data(nullptr), _length(0), _ownership(OwnershipShared)
     {
       if (other._data == nullptr)
         return;
@@ -114,7 +108,7 @@ template <typename LENGTH> class NdefRecordField
     /**
      * @brief Destroy the NDEF record field
      */
-    ~NdefRecordField()
+    ~Field()
     {
       if (_ownership == OwnershipUnique)
         delete[] _data;
@@ -141,7 +135,7 @@ template <typename LENGTH> class NdefRecordField
      */
     Ownership ownership() const { return _ownership; };
 
-    NdefRecordField &operator=(const NdefRecordField &other)
+    Field &operator=(const Field &other)
     {
       // Self-assignment check
       if (this == &other)
@@ -169,7 +163,7 @@ template <typename LENGTH> class NdefRecordField
       return *this;
     };
 
-    bool operator==(const NdefRecordField &other) const
+    bool operator==(const Field &other) const
     {
       if (this == &other)
         return true;
@@ -188,22 +182,22 @@ template <typename LENGTH> class NdefRecordField
     Ownership _ownership;
 };
 
-class NdefRecordId : public NdefRecordField<uint8_t>
+class Id : public Field<uint8_t>
 {
   public:
-    using NdefRecordField::NdefRecordField;
+    using Field::Field;
 };
 
-class NdefRecordPayload : public NdefRecordField<uint32_t>
+class Payload : public Field<uint32_t>
 {
   public:
-    using NdefRecordField::NdefRecordField;
+    using Field::Field;
 };
 
-class NdefRecordType : public NdefRecordField<uint8_t>
+class Type : public Field<uint8_t>
 {
   public:
-    using NdefRecordField::NdefRecordField;
+    using Field::Field;
 
     /**
      * @brief NFC Record Type Definition
@@ -217,7 +211,7 @@ class NdefRecordType : public NdefRecordField<uint8_t>
     /**
      * @brief Create a NDEF record type field based on a Record Type Definition
      */
-    NdefRecordType(RTD type)
+    Type(RTD type)
     {
       auto data = new uint8_t[1];
       if (data == nullptr)
@@ -234,4 +228,5 @@ class NdefRecordType : public NdefRecordField<uint8_t>
     };
 };
 
+} // namespace Field
 } // namespace ArduinoNDEF

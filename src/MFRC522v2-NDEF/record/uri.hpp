@@ -21,10 +21,7 @@ class Uri : public NdefRecord
      * @return Uri* The NDEF URI Record
      */
     static Uri *create(
-        const char *uri,
-        bool is_message_begin,
-        bool is_message_end,
-        const NdefRecordId &id
+        const char *uri, bool is_message_begin, bool is_message_end, const Field::Id &id
     );
     /**
      * @brief Create a new NDEF URI Record
@@ -33,7 +30,7 @@ class Uri : public NdefRecord
      * @param id The record ID
      * @return Uri* The NDEF URI Record
      */
-    static Uri *create(const char *uri, const NdefRecordId &id);
+    static Uri *create(const char *uri, const Field::Id &id);
     /**
      * @brief Create a new NDEF URI Record
      *
@@ -52,11 +49,11 @@ class Uri : public NdefRecord
     static Uri *create(const char *uri);
 
   private:
-    Uri(const NdefRecordType &type,
-        const NdefRecordPayload &payload,
+    Uri(const Field::Type &type,
+        const Field::Payload &payload,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id) :
+        const Field::Id &id) :
         NdefRecord(TNF_WELL_KNOWN, type, payload, is_message_begin, is_message_end, id){
         };
 };

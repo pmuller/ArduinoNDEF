@@ -30,7 +30,7 @@ class ExternalType : public NdefRecord
         uint32_t payload_length,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     );
     /**
      * @brief Create a new NDEF External Type Record
@@ -47,7 +47,7 @@ class ExternalType : public NdefRecord
         const char *external_type,
         const uint8_t *payload,
         uint32_t payload_length,
-        const NdefRecordId &id
+        const Field::Id &id
     );
     /**
      * @brief Create a new NDEF External Type Record
@@ -100,7 +100,7 @@ class ExternalType : public NdefRecord
         const char *payload,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     );
     /**
      * @brief Create a new NDEF External Type Record
@@ -115,7 +115,7 @@ class ExternalType : public NdefRecord
         const char *domain,
         const char *external_type,
         const char *payload,
-        const NdefRecordId &id
+        const Field::Id &id
     );
     /**
      * @brief Create a new NDEF External Type Record
@@ -147,11 +147,11 @@ class ExternalType : public NdefRecord
 
   private:
     ExternalType(
-        const NdefRecordType &type,
-        const NdefRecordPayload &payload,
+        const Field::Type &type,
+        const Field::Payload &payload,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     ) :
         NdefRecord(
             TNF_EXTERNAL_TYPE, type, payload, is_message_begin, is_message_end, id

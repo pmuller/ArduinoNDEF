@@ -17,14 +17,14 @@ class Empty : public NdefRecord
      * @return Empty* The NDEF Empty Record
      */
     static Empty *
-    create(bool is_message_begin, bool is_message_end, const NdefRecordId &id);
+    create(bool is_message_begin, bool is_message_end, const Field::Id &id);
     /**
      * @brief Create a new NDEF Empty Record
      *
      * @param id The record ID
      * @return Empty* The NDEF Empty Record
      */
-    static Empty *create(const NdefRecordId &id);
+    static Empty *create(const Field::Id &id);
     /**
      * @brief Create a new NDEF Empty Record
      *
@@ -42,11 +42,11 @@ class Empty : public NdefRecord
 
   private:
     Empty(
-        const NdefRecordType &type,
-        const NdefRecordPayload &payload,
+        const Field::Type &type,
+        const Field::Payload &payload,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     ) :
         NdefRecord(TNF_EMPTY, type, payload, is_message_begin, is_message_end, id){};
 };

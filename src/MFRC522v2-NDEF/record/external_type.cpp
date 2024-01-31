@@ -15,7 +15,7 @@ ExternalType *ExternalType::create(
     uint32_t payload_length,
     bool is_message_begin,
     bool is_message_end,
-    const NdefRecordId &id
+    const Field::Id &id
 )
 {
   if (domain == nullptr || external_type == nullptr || payload == nullptr ||
@@ -53,10 +53,10 @@ ExternalType *ExternalType::create(
   // 4. Add external type
   memcpy(pointer, external_type, external_type_length);
 
-  const NdefRecordType *type_field =
-      new NdefRecordType(type, type_length, NdefRecordType::OwnershipUnique);
-  const NdefRecordPayload *payload_field =
-      new NdefRecordPayload(payload, payload_length, NdefRecordPayload::OwnershipCopy);
+  const Field::Type *type_field =
+      new Field::Type(type, type_length, Field::Type::OwnershipUnique);
+  const Field::Payload *payload_field =
+      new Field::Payload(payload, payload_length, Field::Payload::OwnershipCopy);
 
   if (type_field == nullptr || payload_field == nullptr)
   {
@@ -84,7 +84,7 @@ ExternalType *ExternalType::create(
     bool is_message_end
 )
 {
-  auto id = new NdefRecordId();
+  auto id = new Field::Id();
 
   if (id == nullptr)
     return nullptr;
@@ -105,7 +105,7 @@ ExternalType *ExternalType::create(
     const char *external_type,
     const uint8_t *payload,
     uint32_t payload_length,
-    const NdefRecordId &id
+    const Field::Id &id
 )
 {
   return create(domain, external_type, payload, payload_length, false, false, id);
@@ -127,7 +127,7 @@ ExternalType *ExternalType::create(
     const char *payload,
     bool is_message_begin,
     bool is_message_end,
-    const NdefRecordId &id
+    const Field::Id &id
 )
 {
   if (domain == nullptr || external_type == nullptr || payload == nullptr)
@@ -152,7 +152,7 @@ ExternalType *ExternalType::create(
     bool is_message_end
 )
 {
-  auto id = new NdefRecordId();
+  auto id = new Field::Id();
 
   if (id == nullptr)
     return nullptr;
@@ -164,7 +164,7 @@ ExternalType *ExternalType::create(
     const char *domain,
     const char *external_type,
     const char *payload,
-    const NdefRecordId &id
+    const Field::Id &id
 )
 {
   return create(domain, external_type, payload, false, false, id);

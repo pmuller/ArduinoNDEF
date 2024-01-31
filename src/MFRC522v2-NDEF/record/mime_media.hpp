@@ -28,7 +28,7 @@ class MimeMedia : public NdefRecord
         uint32_t payload_length,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     );
     /**
      * @brief Create a new NDEF MIME Media Record
@@ -43,7 +43,7 @@ class MimeMedia : public NdefRecord
         const char *mime_type,
         const uint8_t *payload,
         uint32_t payload_length,
-        const NdefRecordId &id
+        const Field::Id &id
     );
     /**
      * @brief Create a new NDEF MIME Media Record
@@ -87,7 +87,7 @@ class MimeMedia : public NdefRecord
         const char *payload,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     );
     /**
      * @brief Create a new NDEF MIME Media Record
@@ -113,7 +113,7 @@ class MimeMedia : public NdefRecord
      * @return MimeMedia* The NDEF MIME Media Record
      */
     static MimeMedia *
-    create(const char *mime_type, const char *payload, const NdefRecordId &id);
+    create(const char *mime_type, const char *payload, const Field::Id &id);
     /**
      * @brief Create a new NDEF MIME Media Record
      *
@@ -125,11 +125,11 @@ class MimeMedia : public NdefRecord
 
   private:
     MimeMedia(
-        const NdefRecordType &type,
-        const NdefRecordPayload &payload,
+        const Field::Type &type,
+        const Field::Payload &payload,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     ) :
         NdefRecord(TNF_MIME_MEDIA, type, payload, is_message_begin, is_message_end, id){
         };

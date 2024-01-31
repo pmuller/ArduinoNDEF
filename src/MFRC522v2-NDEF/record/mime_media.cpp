@@ -13,11 +13,11 @@ MimeMedia *MimeMedia::create(
     uint32_t payload_length,
     bool is_message_begin,
     bool is_message_end,
-    const NdefRecordId &id
+    const Field::Id &id
 )
 {
-  auto type_field = new NdefRecordType(mime_type);
-  auto payload_field = new NdefRecordPayload(payload, payload_length);
+  auto type_field = new Field::Type(mime_type);
+  auto payload_field = new Field::Payload(payload, payload_length);
 
   if (type_field == nullptr || payload_field == nullptr)
     return nullptr;
@@ -39,7 +39,7 @@ MimeMedia *MimeMedia::create(
     bool is_message_end
 )
 {
-  auto id = new NdefRecordId();
+  auto id = new Field::Id();
 
   if (id == nullptr)
     return nullptr;
@@ -58,7 +58,7 @@ MimeMedia *MimeMedia::create(
     const char *mime_type,
     const uint8_t *payload,
     uint32_t payload_length,
-    const NdefRecordId &id
+    const Field::Id &id
 )
 {
   return create(mime_type, payload, payload_length, false, false, id);
@@ -76,7 +76,7 @@ MimeMedia *MimeMedia::create(
     const char *payload,
     bool is_message_begin,
     bool is_message_end,
-    const NdefRecordId &id
+    const Field::Id &id
 )
 {
   return create(
@@ -106,7 +106,7 @@ MimeMedia *MimeMedia::create(
 }
 
 MimeMedia *
-MimeMedia::create(const char *mime_type, const char *payload, const NdefRecordId &id)
+MimeMedia::create(const char *mime_type, const char *payload, const Field::Id &id)
 {
   return create(
       mime_type,

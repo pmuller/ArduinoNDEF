@@ -10,7 +10,7 @@ Text *Text::create(
     const char *language_code,
     bool is_message_begin,
     bool is_message_end,
-    const NdefRecordId &id
+    const Field::Id &id
 )
 {
   // 1. Prepare header
@@ -37,12 +37,9 @@ Text *Text::create(
   memcpy(payload_data, header, header_length);
   memcpy(payload_data + header_length, text, text_length);
 
-  auto type = new NdefRecordType(NdefRecordType::RTD_TEXT);
-  auto payload = new NdefRecordPayload(
-      payload_data,
-      payload_length,
-      NdefRecordPayload::OwnershipUnique
-  );
+  auto type = new Field::Type(Field::Type::RTD_TEXT);
+  auto payload =
+      new Field::Payload(payload_data, payload_length, Field::Payload::OwnershipUnique);
   if (type == nullptr || payload == nullptr)
     return nullptr;
 
@@ -51,13 +48,13 @@ Text *Text::create(
 
 Text *Text::create(const char *text, const char *language_code)
 {
-  auto id = new NdefRecordId();
+  auto id = new Field::Id();
   if (id == nullptr)
     return nullptr;
   return create(text, language_code, false, false, *id);
 }
 
-Text *Text::create(const char *text, const char *language_code, const NdefRecordId &id)
+Text *Text::create(const char *text, const char *language_code, const Field::Id &id)
 {
   return create(text, language_code, false, false, id);
 }
@@ -69,7 +66,7 @@ Text *Text::create(
     bool is_message_end
 )
 {
-  auto id = new NdefRecordId();
+  auto id = new Field::Id();
   if (id == nullptr)
     return nullptr;
   return create(text, language_code, is_message_begin, is_message_end, *id);

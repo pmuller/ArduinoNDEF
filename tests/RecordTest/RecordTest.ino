@@ -28,11 +28,11 @@ test(record_encode_short)
 {
   ArduinoNDEF::NdefRecord record(
       ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN,
-      *(new ArduinoNDEF::NdefRecordType(ArduinoNDEF::NdefRecordType::RTD_TEXT)),
-      *(new ArduinoNDEF::NdefRecordPayload("Hello")),
+      *(new ArduinoNDEF::Field::Type(ArduinoNDEF::Field::Type::RTD_TEXT)),
+      *(new ArduinoNDEF::Field::Payload("Hello")),
       true,
       true,
-      *(new ArduinoNDEF::NdefRecordId())
+      *(new ArduinoNDEF::Field::Id())
   );
   assertEqual(record.get_encoded_size(), static_cast<uint32_t>(9));
   uint8_t *encoded = record.encode();
@@ -56,10 +56,10 @@ test(record_encode_short)
 test(record_decode_short)
 {
   uint8_t encoded[] = {
-      0b11010001,                            // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x01
-      1,                                     // Type length is 1
-      5,                                     // Payload length is 5
-      ArduinoNDEF::NdefRecordType::RTD_TEXT, // Type is RTD_TEXT
+      0b11010001,                         // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x01
+      1,                                  // Type length is 1
+      5,                                  // Payload length is 5
+      ArduinoNDEF::Field::Type::RTD_TEXT, // Type is RTD_TEXT
       'H',
       'e',
       'l',
@@ -93,11 +93,11 @@ test(record_encode_long_text)
 {
   ArduinoNDEF::NdefRecord record(
       ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN,
-      *(new ArduinoNDEF::NdefRecordType(ArduinoNDEF::NdefRecordType::RTD_TEXT)),
-      *(new ArduinoNDEF::NdefRecordPayload(LONG_TEXT)),
+      *(new ArduinoNDEF::Field::Type(ArduinoNDEF::Field::Type::RTD_TEXT)),
+      *(new ArduinoNDEF::Field::Payload(LONG_TEXT)),
       false,
       false,
-      *(new ArduinoNDEF::NdefRecordId())
+      *(new ArduinoNDEF::Field::Id())
   );
   assertEqual(record.get_encoded_size(), static_cast<uint32_t>(393));
   uint8_t *encoded = record.encode();
@@ -154,7 +154,7 @@ test(create_text_record)
   auto record = ArduinoNDEF::Record::Text::create("Hello", "en");
   assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record->type().length(), 1);
-  assertEqual(record->type().data()[0], ArduinoNDEF::NdefRecordType::RTD_TEXT);
+  assertEqual(record->type().data()[0], ArduinoNDEF::Field::Type::RTD_TEXT);
   assertEqual(record->payload().length(), static_cast<uint32_t>(8));
   const uint8_t *payload = record->payload().data();
   assertEqual(payload[0], 0x02);
@@ -173,7 +173,7 @@ test(create_uri_record)
   auto record = ArduinoNDEF::Record::Uri::create("https://hackaday.com");
   assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN);
   assertEqual(record->type().length(), 1);
-  assertEqual(record->type().data()[0], ArduinoNDEF::NdefRecordType::RTD_URI);
+  assertEqual(record->type().data()[0], ArduinoNDEF::Field::Type::RTD_URI);
   assertEqual(record->payload().length(), static_cast<uint32_t>(13));
   const uint8_t *payload = record->payload().data();
   assertEqual(payload[0], 0x04);
@@ -314,11 +314,11 @@ test(get_encoded_ndef_record_size__empty)
 test(get_encoded_ndef_record_size__uri)
 {
   const uint8_t encoded[] = {
-      0b11010001,                           // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x01
-      1,                                    // Type length is 1
-      13,                                   // Payload length is 13
-      ArduinoNDEF::NdefRecordType::RTD_URI, // Type is RTD_URI
-      0x04,                                 // URI prefix is https://
+      0b11010001,                        // MB=1, ME=1, CF=0, SR=1, IL=0, TNF=0x01
+      1,                                 // Type length is 1
+      13,                                // Payload length is 13
+      ArduinoNDEF::Field::Type::RTD_URI, // Type is RTD_URI
+      0x04,                              // URI prefix is https://
       'h',
       'a',
       'c',

@@ -70,11 +70,11 @@ class NdefRecord
      */
     NdefRecord(
         TNF type_name_format,
-        const NdefRecordType &type,
-        const NdefRecordPayload &payload,
+        const Field::Type &type,
+        const Field::Payload &payload,
         bool is_message_begin,
         bool is_message_end,
-        const NdefRecordId &id
+        const Field::Id &id
     ) :
         is_message_begin(is_message_begin),
         is_message_end(is_message_end), type_name_format(type_name_format), _type(type),
@@ -122,14 +122,14 @@ class NdefRecord
      */
     static NdefRecord *decode(const uint8_t &data, uint32_t data_length);
 
-    const NdefRecordType &type() const { return _type; };
-    const NdefRecordId &id() const { return _id; };
-    const NdefRecordPayload &payload() const { return _payload; };
+    const Field::Type &type() const { return _type; };
+    const Field::Id &id() const { return _id; };
+    const Field::Payload &payload() const { return _payload; };
 
   protected:
-    const NdefRecordType &_type;
-    const NdefRecordId &_id;
-    const NdefRecordPayload &_payload;
+    const Field::Type &_type;
+    const Field::Id &_id;
+    const Field::Payload &_payload;
 };
 
 /**
