@@ -9,6 +9,8 @@
 
 namespace ArduinoNDEF
 {
+namespace Record
+{
 
 uint8_t *NdefRecord::encode() const
 {
@@ -253,4 +255,5 @@ uint32_t get_encoded_ndef_record_size(const uint8_t *data, uint32_t length)
   return index + type_length + id_length + payload_length;
 }
 
+} // namespace Record
 } // namespace ArduinoNDEF

@@ -6,7 +6,7 @@
 test(empty_record)
 {
   auto record = ArduinoNDEF::Record::Empty::create();
-  assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_EMPTY);
+  assertEqual(record->type_name_format, ArduinoNDEF::Record::NdefRecord::TNF_EMPTY);
   assertFalse(record->is_message_begin);
   assertFalse(record->is_message_end);
   assertEqual(record->type().data(), NULL);
@@ -26,8 +26,8 @@ test(empty_record)
 
 test(record_encode_short)
 {
-  ArduinoNDEF::NdefRecord record(
-      ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN,
+  ArduinoNDEF::Record::NdefRecord record(
+      ArduinoNDEF::Record::NdefRecord::TNF_WELL_KNOWN,
       *(new ArduinoNDEF::Field::Type(ArduinoNDEF::Field::Type::RTD_TEXT)),
       *(new ArduinoNDEF::Field::Payload("Hello")),
       true,
@@ -66,10 +66,13 @@ test(record_decode_short)
       'l',
       'o'
   };
-  auto record = ArduinoNDEF::NdefRecord::decode(*encoded, 9);
+  auto record = ArduinoNDEF::Record::NdefRecord::decode(*encoded, 9);
   assertTrue(record->is_message_begin);
   assertTrue(record->is_message_end);
-  assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(
+      record->type_name_format,
+      ArduinoNDEF::Record::NdefRecord::TNF_WELL_KNOWN
+  );
   assertEqual(record->type().length(), 1);
   assertEqual(record->type().data()[0], static_cast<uint8_t>('T'));
   assertEqual(record->payload().length(), static_cast<uint32_t>(5));
@@ -91,8 +94,8 @@ const char LONG_TEXT[] =
 
 test(record_encode_long_text)
 {
-  ArduinoNDEF::NdefRecord record(
-      ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN,
+  ArduinoNDEF::Record::NdefRecord record(
+      ArduinoNDEF::Record::NdefRecord::TNF_WELL_KNOWN,
       *(new ArduinoNDEF::Field::Type(ArduinoNDEF::Field::Type::RTD_TEXT)),
       *(new ArduinoNDEF::Field::Payload(LONG_TEXT)),
       false,
@@ -135,11 +138,14 @@ test(record_decode_long_text)
   // Copy reference text
   memcpy(encoded + 7, LONG_TEXT, 386);
   // Check decoding
-  auto record = ArduinoNDEF::NdefRecord::decode(*encoded, 393);
+  auto record = ArduinoNDEF::Record::NdefRecord::decode(*encoded, 393);
   delete[] encoded;
   assertFalse(record->is_message_begin);
   assertFalse(record->is_message_end);
-  assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(
+      record->type_name_format,
+      ArduinoNDEF::Record::NdefRecord::TNF_WELL_KNOWN
+  );
   assertEqual(record->type().length(), 1);
   assertEqual(record->type().data()[0], static_cast<uint8_t>('T'));
   assertEqual(record->payload().length(), static_cast<uint32_t>(386));
@@ -152,7 +158,10 @@ test(record_decode_long_text)
 test(create_text_record)
 {
   auto record = ArduinoNDEF::Record::Text::create("Hello", "en");
-  assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(
+      record->type_name_format,
+      ArduinoNDEF::Record::NdefRecord::TNF_WELL_KNOWN
+  );
   assertEqual(record->type().length(), 1);
   assertEqual(record->type().data()[0], ArduinoNDEF::Field::Type::RTD_TEXT);
   assertEqual(record->payload().length(), static_cast<uint32_t>(8));
@@ -171,7 +180,10 @@ test(create_text_record)
 test(create_uri_record)
 {
   auto record = ArduinoNDEF::Record::Uri::create("https://hackaday.com");
-  assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_WELL_KNOWN);
+  assertEqual(
+      record->type_name_format,
+      ArduinoNDEF::Record::NdefRecord::TNF_WELL_KNOWN
+  );
   assertEqual(record->type().length(), 1);
   assertEqual(record->type().data()[0], ArduinoNDEF::Field::Type::RTD_URI);
   assertEqual(record->payload().length(), static_cast<uint32_t>(13));
@@ -195,7 +207,10 @@ test(create_uri_record)
 test(create_mime_media_record)
 {
   auto record = ArduinoNDEF::Record::MimeMedia::create("text/plain", "Hello");
-  assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_MIME_MEDIA);
+  assertEqual(
+      record->type_name_format,
+      ArduinoNDEF::Record::NdefRecord::TNF_MIME_MEDIA
+  );
   assertEqual(record->type().length(), 10);
   assertEqual(record->type().data()[0], static_cast<uint8_t>('t'));
   assertEqual(record->type().data()[1], static_cast<uint8_t>('e'));
@@ -221,7 +236,10 @@ test(create_external_type_record)
 {
   auto record =
       ArduinoNDEF::Record::ExternalType::create("com.example", "custom-type", "Hello");
-  assertEqual(record->type_name_format, ArduinoNDEF::NdefRecord::TNF_EXTERNAL_TYPE);
+  assertEqual(
+      record->type_name_format,
+      ArduinoNDEF::Record::NdefRecord::TNF_EXTERNAL_TYPE
+  );
   assertEqual(record->type().length(), 35);
   assertEqual(record->type().data()[0], static_cast<uint8_t>('u'));
   assertEqual(record->type().data()[1], static_cast<uint8_t>('r'));
@@ -272,27 +290,27 @@ test(get_encoded_ndef_record_size__invalid)
 {
   const uint8_t encoded[] = {0, 0, 0, 0};
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(nullptr, 42),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(nullptr, 42),
       static_cast<uint32_t>(0)
   );
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 0),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 0),
       static_cast<uint32_t>(0)
   );
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 1),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 1),
       static_cast<uint32_t>(0)
   );
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 2),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 2),
       static_cast<uint32_t>(0)
   );
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 3),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 3),
       static_cast<uint32_t>(0)
   );
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 4),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 4),
       static_cast<uint32_t>(0)
   );
 }
@@ -301,12 +319,12 @@ test(get_encoded_ndef_record_size__empty)
 {
   const uint8_t encoded[] = {0b00010000, 0, 0};
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 3),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 3),
       static_cast<uint32_t>(3)
   );
   // Ensure additional bytes are ignored
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 6),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 6),
       static_cast<uint32_t>(3)
   );
 }
@@ -333,13 +351,13 @@ test(get_encoded_ndef_record_size__uri)
       'm'
   };
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 17),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 17),
       static_cast<uint32_t>(17)
   );
   // Ensure additional bytes are ignored and we don't touch non allocated memory
   // (valgrind will make this fail if we do)
   assertEqual(
-      ArduinoNDEF::get_encoded_ndef_record_size(encoded, 42),
+      ArduinoNDEF::Record::get_encoded_ndef_record_size(encoded, 42),
       static_cast<uint32_t>(17)
   );
 }

@@ -24,7 +24,7 @@ NdefMessage::~NdefMessage()
   delete[] records;
 }
 
-int8_t NdefMessage::add_record(NdefRecord *record)
+int8_t NdefMessage::add_record(Record::NdefRecord *record)
 {
   if (record == nullptr)
   {
@@ -32,7 +32,7 @@ int8_t NdefMessage::add_record(NdefRecord *record)
     return NDEF_ERROR_RECORD_IS_NULL;
   }
 
-  NdefRecord **records = new NdefRecord *[record_count + 1];
+  Record::NdefRecord **records = new Record::NdefRecord *[record_count + 1];
 
   if (records == nullptr)
   {
@@ -42,7 +42,7 @@ int8_t NdefMessage::add_record(NdefRecord *record)
 
   if (this->records != nullptr)
   {
-    memcpy(records, this->records, sizeof(NdefRecord *) * record_count);
+    memcpy(records, this->records, sizeof(Record::NdefRecord *) * record_count);
     delete[] this->records;
   }
 
@@ -109,7 +109,7 @@ uint8_t count_ndef_message_records(const uint8_t *message, uint32_t length)
   while (index < length)
   {
     // Get current record size
-    record_size = get_encoded_ndef_record_size(&message[index], length - index);
+    record_size = Record::get_encoded_ndef_record_size(&message[index], length - index);
     // Stop if current record size is 0 (probably invalid)
     if (record_size == 0)
       break;
@@ -132,13 +132,13 @@ NdefMessage *NdefMessage::decode(const uint8_t *data, uint32_t length)
 
   auto record_index = 0;
   auto record_count = count_ndef_message_records(data, length);
-  auto records = new NdefRecord *[record_count];
+  auto records = new Record::NdefRecord *[record_count];
   auto data_ptr = data;
   auto data_end = data_ptr + length;
 
   while (data_ptr < data_end)
   {
-    auto record = NdefRecord::decode(*data_ptr, data_end - data_ptr);
+    auto record = Record::NdefRecord::decode(*data_ptr, data_end - data_ptr);
 
     if (record == nullptr)
     {
