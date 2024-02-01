@@ -1,3 +1,4 @@
+#include "../field/text_payload.hpp"
 #include "../record.hpp"
 
 namespace ArduinoNDEF
@@ -65,7 +66,7 @@ class Text : public Record
   private:
     Text(
         const Field::Type &type,
-        const Field::Payload &payload,
+        const Field::TextPayload &payload,
         bool is_message_begin,
         bool is_message_end,
         const Field::Id &id

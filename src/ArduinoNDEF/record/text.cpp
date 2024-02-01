@@ -13,37 +13,18 @@ Text *Text::create(
     const Field::Id &id
 )
 {
-  // 1. Prepare header
-  uint32_t language_code_length = strlen(language_code);
-
-  if (language_code_length != 2 && language_code_length != 5)
-    return nullptr;
-  if (language_code_length == 5 && language_code[2] != '-')
+  auto type_field = new Field::Type(Field::Type::RTD_TEXT);
+  if (type_field == nullptr)
     return nullptr;
 
-  uint32_t header_length = 1 + language_code_length;
-  uint8_t header[header_length];
-  header[0] = language_code_length;
-  memcpy(header + 1, language_code, language_code_length);
-
-  // 2. Prepare payload
-  uint32_t text_length = strlen(text);
-  uint32_t payload_length = header_length + text_length;
-
-  auto payload_data = new uint8_t[payload_length];
-  if (payload_data == nullptr)
+  auto payload_field = Field::TextPayload::from_text(text, language_code);
+  if (payload_field == nullptr)
+  {
+    delete type_field;
     return nullptr;
+  }
 
-  memcpy(payload_data, header, header_length);
-  memcpy(payload_data + header_length, text, text_length);
-
-  auto type = new Field::Type(Field::Type::RTD_TEXT);
-  auto payload =
-      new Field::Payload(payload_data, payload_length, Field::Payload::OwnershipUnique);
-  if (type == nullptr || payload == nullptr)
-    return nullptr;
-
-  return new Text(*type, *payload, is_message_begin, is_message_end, id);
+  return new Text(*type_field, *payload_field, is_message_begin, is_message_end, id);
 }
 
 Text *Text::create(const char *text, const char *language_code)

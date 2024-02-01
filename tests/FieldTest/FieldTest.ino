@@ -286,6 +286,81 @@ test(uri_payload__no_abbreviation)
   delete payload;
 }
 
+test(text_payload__language_code_2_characters)
+{
+  auto payload = ArduinoNDEF::Field::TextPayload::from_text("Hello, world!", "en");
+  assertEqual(payload->length(), static_cast<uint32_t>(16));
+  assertEqual(payload->data()[0], 0x02);
+  assertEqual(payload->data()[1], static_cast<uint8_t>('e'));
+  assertEqual(payload->data()[2], static_cast<uint8_t>('n'));
+  assertEqual(payload->data()[3], static_cast<uint8_t>('H'));
+  assertEqual(payload->data()[4], static_cast<uint8_t>('e'));
+  assertEqual(payload->data()[5], static_cast<uint8_t>('l'));
+  assertEqual(payload->data()[6], static_cast<uint8_t>('l'));
+  assertEqual(payload->data()[7], static_cast<uint8_t>('o'));
+  assertEqual(payload->data()[8], static_cast<uint8_t>(','));
+  assertEqual(payload->data()[9], static_cast<uint8_t>(' '));
+  assertEqual(payload->data()[10], static_cast<uint8_t>('w'));
+  assertEqual(payload->data()[11], static_cast<uint8_t>('o'));
+  assertEqual(payload->data()[12], static_cast<uint8_t>('r'));
+  assertEqual(payload->data()[13], static_cast<uint8_t>('l'));
+  assertEqual(payload->data()[14], static_cast<uint8_t>('d'));
+  assertEqual(payload->data()[15], static_cast<uint8_t>('!'));
+  auto text = payload->to_text();
+  assertEqual(text, "Hello, world!");
+  delete[] text;
+  auto language_code = payload->to_language_code();
+  assertEqual(language_code, "en");
+  delete[] language_code;
+  delete payload;
+}
+
+test(text_payload__language_code_5_characters)
+{
+  auto payload = ArduinoNDEF::Field::TextPayload::from_text("Hello, world!", "en-US");
+  assertEqual(payload->length(), static_cast<uint32_t>(19));
+  assertEqual(payload->data()[0], 0x05);
+  assertEqual(payload->data()[1], static_cast<uint8_t>('e'));
+  assertEqual(payload->data()[2], static_cast<uint8_t>('n'));
+  assertEqual(payload->data()[3], static_cast<uint8_t>('-'));
+  assertEqual(payload->data()[4], static_cast<uint8_t>('U'));
+  assertEqual(payload->data()[5], static_cast<uint8_t>('S'));
+  assertEqual(payload->data()[6], static_cast<uint8_t>('H'));
+  assertEqual(payload->data()[7], static_cast<uint8_t>('e'));
+  assertEqual(payload->data()[8], static_cast<uint8_t>('l'));
+  assertEqual(payload->data()[9], static_cast<uint8_t>('l'));
+  assertEqual(payload->data()[10], static_cast<uint8_t>('o'));
+  assertEqual(payload->data()[11], static_cast<uint8_t>(','));
+  assertEqual(payload->data()[12], static_cast<uint8_t>(' '));
+  assertEqual(payload->data()[13], static_cast<uint8_t>('w'));
+  assertEqual(payload->data()[14], static_cast<uint8_t>('o'));
+  assertEqual(payload->data()[15], static_cast<uint8_t>('r'));
+  assertEqual(payload->data()[16], static_cast<uint8_t>('l'));
+  assertEqual(payload->data()[17], static_cast<uint8_t>('d'));
+  assertEqual(payload->data()[18], static_cast<uint8_t>('!'));
+  auto text = payload->to_text();
+  assertEqual(text, "Hello, world!");
+  delete[] text;
+  auto language_code = payload->to_language_code();
+  assertEqual(language_code, "en-US");
+  delete[] language_code;
+  delete payload;
+}
+
+test(text_payload__errors)
+{
+  assertEqual(
+      ArduinoNDEF::Field::TextPayload::from_text("Hello", "invalid language code"),
+      nullptr
+  );
+  assertEqual(ArduinoNDEF::Field::TextPayload::from_text("Hello", "abcde"), nullptr);
+  assertEqual(ArduinoNDEF::Field::TextPayload::from_text(nullptr, "en"), nullptr);
+  assertEqual(
+      ArduinoNDEF::Field::TextPayload::from_text("Hello, world!", nullptr),
+      nullptr
+  );
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)
