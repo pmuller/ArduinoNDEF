@@ -1,24 +1,24 @@
-#include "uri.hpp"
+#include "uri_payload.hpp"
 
-#include "macros.hpp"
-
-#include <string.h>
+#include "../macros.hpp"
 
 namespace ArduinoNDEF
+{
+namespace Field
 {
 
 /**
  * @brief NDEF URI identifier codes
  * @ref NFCForum-TS-RTD_URI_1.0.pdf - Table 3. Abbreviation Table
  */
-#define NDEF_URI_CODE_IDENTIFIER_COUNT 36
-struct NdefUriPrefix
+#define ARDUINONDEF_FIELD_URI_PAYLOAD_CODE_IDENTIFIER_COUNT 36
+struct UriAbbreviation
 {
     uint8_t code;
     const char *prefix;
 };
-static const NdefUriPrefix
-    NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[NDEF_URI_CODE_IDENTIFIER_COUNT] = {
+static const UriAbbreviation ARDUINONDEF_FIELD_URI_PAYLOAD_IDENTIFIER_CODE_IDENTIFIERS
+    [ARDUINONDEF_FIELD_URI_PAYLOAD_CODE_IDENTIFIER_COUNT] = {
         {0x00,                           ""},
         {0x01,                "http://www."},
         {0x02,               "https://www."},
@@ -57,23 +57,32 @@ static const NdefUriPrefix
         {0x23,                   "urn:nfc:"},
 };
 
-NdefUriPayload::NdefUriPayload(const char *uri)
+UriPayload *UriPayload::from_uri(const char *uri)
 {
+  if (uri == nullptr)
+    return nullptr;
+
   size_t uri_length = strlen(uri);
+
+  // 1 byte URIs obviously can't be valid,
+  // but I'm not sure what the minimum length should be
+  if (uri_length < 1)
+    return nullptr;
+
   const char *prefix;
   uint8_t prefix_length;
   uint8_t uri_offset = 0;
   uint8_t code = 0x00; // No prefix
 
   // Check if the URI starts with a known prefix
-  for (uint8_t i = 1; i < NDEF_URI_CODE_IDENTIFIER_COUNT; i++)
+  for (uint8_t i = 1; i < ARDUINONDEF_FIELD_URI_PAYLOAD_CODE_IDENTIFIER_COUNT; i++)
   {
-    prefix = NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].prefix;
+    prefix = ARDUINONDEF_FIELD_URI_PAYLOAD_IDENTIFIER_CODE_IDENTIFIERS[i].prefix;
     prefix_length = strlen(prefix);
 
     if (strncmp(uri, prefix, prefix_length) == 0)
     {
-      code = NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].code;
+      code = ARDUINONDEF_FIELD_URI_PAYLOAD_IDENTIFIER_CODE_IDENTIFIERS[i].code;
       uri_length -= prefix_length;
       uri_offset = prefix_length;
       break;
@@ -85,54 +94,26 @@ NdefUriPayload::NdefUriPayload(const char *uri)
   uint8_t *data = new uint8_t[length];
 
   if (data == nullptr)
-    return;
+    return nullptr;
 
   data[0] = code;
   memcpy(data + 1, &uri[uri_offset], uri_length);
 
-  _data = data;
-  _length = length;
+  return new UriPayload(data, length);
 }
 
-bool NdefUriPayload::is_valid() const
+const char *UriPayload::to_uri() const
 {
-  // Check if the data is valid
-  if (_data == nullptr || _length < 2)
-    return false;
-
-  // Check if the identifier code is valid
-  uint8_t code = _data[0];
-
-  for (uint8_t i = 0; i < NDEF_URI_CODE_IDENTIFIER_COUNT; i++)
-    if (code == NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].code)
-      return true;
-
-  return false;
-}
-
-uint8_t NdefUriPayload::code() const
-{
-  if (!is_valid())
-    return 0;
-
-  return _data[0];
-}
-
-const char *NdefUriPayload::uri() const
-{
-  if (!is_valid())
-    return nullptr;
-
   const char *prefix = nullptr;
   uint8_t prefix_length = 0;
   char *uri = nullptr;
   size_t uri_length = 0;
-  uint8_t code_ = code();
+  uint8_t code_ = _data[0];
 
-  for (uint8_t i = 0; i < NDEF_URI_CODE_IDENTIFIER_COUNT; i++)
-    if (code_ == NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].code)
+  for (uint8_t i = 0; i < ARDUINONDEF_FIELD_URI_PAYLOAD_CODE_IDENTIFIER_COUNT; i++)
+    if (code_ == ARDUINONDEF_FIELD_URI_PAYLOAD_IDENTIFIER_CODE_IDENTIFIERS[i].code)
     {
-      prefix = NDEF_URI_IDENTIFIER_CODE_IDENTIFIERS[i].prefix;
+      prefix = ARDUINONDEF_FIELD_URI_PAYLOAD_IDENTIFIER_CODE_IDENTIFIERS[i].prefix;
       prefix_length = strlen(prefix);
       break;
     }
@@ -154,4 +135,5 @@ const char *NdefUriPayload::uri() const
   return uri;
 }
 
+} // namespace Field
 } // namespace ArduinoNDEF

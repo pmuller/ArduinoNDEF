@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../field.hpp"
 
 namespace ArduinoNDEF

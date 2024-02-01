@@ -200,6 +200,92 @@ test(type)
   assertEqual(uri.ownership(), ArduinoNDEF::Field::Type::OwnershipUnique);
 }
 
+// NFCForum-TS-RTD_URI_1.0.pdf - A.1
+test(uri_payload__http_www)
+{
+  auto payload = ArduinoNDEF::Field::UriPayload::from_uri("http://www.nfc.com");
+  assertEqual(payload->length(), static_cast<uint32_t>(8));
+  assertEqual(payload->data()[0], 0x01); // http://www.
+  assertEqual(payload->data()[1], static_cast<uint8_t>('n'));
+  assertEqual(payload->data()[2], static_cast<uint8_t>('f'));
+  assertEqual(payload->data()[3], static_cast<uint8_t>('c'));
+  assertEqual(payload->data()[4], static_cast<uint8_t>('.'));
+  assertEqual(payload->data()[5], static_cast<uint8_t>('c'));
+  assertEqual(payload->data()[6], static_cast<uint8_t>('o'));
+  assertEqual(payload->data()[7], static_cast<uint8_t>('m'));
+  auto uri = payload->to_uri();
+  assertEqual(uri, "http://www.nfc.com");
+  delete[] uri;
+  delete payload;
+}
+
+// NFCForum-TS-RTD_URI_1.0.pdf - A.2
+test(uri_payload__phone)
+{
+  auto payload = ArduinoNDEF::Field::UriPayload::from_uri("tel:+35891234567");
+  assertEqual(payload->length(), static_cast<uint32_t>(13));
+  assertEqual(payload->data()[0], 0x05); // tel:
+  assertEqual(payload->data()[1], static_cast<uint8_t>('+'));
+  assertEqual(payload->data()[2], static_cast<uint8_t>('3'));
+  assertEqual(payload->data()[3], static_cast<uint8_t>('5'));
+  assertEqual(payload->data()[4], static_cast<uint8_t>('8'));
+  assertEqual(payload->data()[5], static_cast<uint8_t>('9'));
+  assertEqual(payload->data()[6], static_cast<uint8_t>('1'));
+  assertEqual(payload->data()[7], static_cast<uint8_t>('2'));
+  assertEqual(payload->data()[8], static_cast<uint8_t>('3'));
+  assertEqual(payload->data()[9], static_cast<uint8_t>('4'));
+  assertEqual(payload->data()[10], static_cast<uint8_t>('5'));
+  assertEqual(payload->data()[11], static_cast<uint8_t>('6'));
+  assertEqual(payload->data()[12], static_cast<uint8_t>('7'));
+  auto uri = payload->to_uri();
+  assertEqual(uri, "tel:+35891234567");
+  delete[] uri;
+  delete payload;
+}
+
+// NFCForum-TS-RTD_URI_1.0.pdf - A.3
+test(uri_payload__no_abbreviation)
+{
+  auto payload =
+      ArduinoNDEF::Field::UriPayload::from_uri("mms://example.com/download.wmv");
+  assertEqual(payload->length(), static_cast<uint32_t>(31));
+  assertEqual(payload->data()[0], 0x00); // No abbreviation
+  assertEqual(payload->data()[1], static_cast<uint8_t>('m'));
+  assertEqual(payload->data()[2], static_cast<uint8_t>('m'));
+  assertEqual(payload->data()[3], static_cast<uint8_t>('s'));
+  assertEqual(payload->data()[4], static_cast<uint8_t>(':'));
+  assertEqual(payload->data()[5], static_cast<uint8_t>('/'));
+  assertEqual(payload->data()[6], static_cast<uint8_t>('/'));
+  assertEqual(payload->data()[7], static_cast<uint8_t>('e'));
+  assertEqual(payload->data()[8], static_cast<uint8_t>('x'));
+  assertEqual(payload->data()[9], static_cast<uint8_t>('a'));
+  assertEqual(payload->data()[10], static_cast<uint8_t>('m'));
+  assertEqual(payload->data()[11], static_cast<uint8_t>('p'));
+  assertEqual(payload->data()[12], static_cast<uint8_t>('l'));
+  assertEqual(payload->data()[13], static_cast<uint8_t>('e'));
+  assertEqual(payload->data()[14], static_cast<uint8_t>('.'));
+  assertEqual(payload->data()[15], static_cast<uint8_t>('c'));
+  assertEqual(payload->data()[16], static_cast<uint8_t>('o'));
+  assertEqual(payload->data()[17], static_cast<uint8_t>('m'));
+  assertEqual(payload->data()[18], static_cast<uint8_t>('/'));
+  assertEqual(payload->data()[19], static_cast<uint8_t>('d'));
+  assertEqual(payload->data()[20], static_cast<uint8_t>('o'));
+  assertEqual(payload->data()[21], static_cast<uint8_t>('w'));
+  assertEqual(payload->data()[22], static_cast<uint8_t>('n'));
+  assertEqual(payload->data()[23], static_cast<uint8_t>('l'));
+  assertEqual(payload->data()[24], static_cast<uint8_t>('o'));
+  assertEqual(payload->data()[25], static_cast<uint8_t>('a'));
+  assertEqual(payload->data()[26], static_cast<uint8_t>('d'));
+  assertEqual(payload->data()[27], static_cast<uint8_t>('.'));
+  assertEqual(payload->data()[28], static_cast<uint8_t>('w'));
+  assertEqual(payload->data()[29], static_cast<uint8_t>('m'));
+  assertEqual(payload->data()[30], static_cast<uint8_t>('v'));
+  auto uri = payload->to_uri();
+  assertEqual(uri, "mms://example.com/download.wmv");
+  delete[] uri;
+  delete payload;
+}
+
 void setup()
 {
 #if !defined(EPOXY_DUINO)

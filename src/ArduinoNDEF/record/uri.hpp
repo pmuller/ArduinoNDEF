@@ -1,3 +1,4 @@
+#include "../field/uri_payload.hpp"
 #include "../record.hpp"
 
 namespace ArduinoNDEF
@@ -50,7 +51,7 @@ class Uri : public Record
 
   private:
     Uri(const Field::Type &type,
-        const Field::Payload &payload,
+        const Field::UriPayload &payload,
         bool is_message_begin,
         bool is_message_end,
         const Field::Id &id) :

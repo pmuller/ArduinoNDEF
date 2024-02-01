@@ -1,6 +1,6 @@
-#include "../uri.hpp"
-
 #include "uri.hpp"
+
+#include "../field/uri_payload.hpp"
 
 namespace ArduinoNDEF
 {
@@ -11,15 +11,18 @@ Uri *Uri::create(
     const char *uri, bool is_message_begin, bool is_message_end, const Field::Id &id
 )
 {
-  NdefUriPayload payload(uri);
-  if (!payload.is_valid())
+  auto payload_field = Field::UriPayload::from_uri(uri);
+
+  if (payload_field == nullptr)
     return nullptr;
 
-  auto payload_field = new Field::Payload(payload.data(), payload.length());
   auto type_field = new Field::Type(Field::Type::RTD_URI);
 
-  if (payload_field == nullptr || type_field == nullptr)
+  if (type_field == nullptr)
+  {
+    delete payload_field;
     return nullptr;
+  }
 
   return new Uri(*type_field, *payload_field, is_message_begin, is_message_end, id);
 }
