@@ -22,3 +22,7 @@ The library is a work in progress but is approaching a stable release.
 - **Memory Management**:
   Rigorously tested with Valgrind to ensure proper memory handling,
   minimizing leaks and errors
+
+## Limitations
+
+- Doesn't support chunked records
